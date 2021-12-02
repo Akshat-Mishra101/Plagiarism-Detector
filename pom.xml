@@ -8,6 +8,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <mainClass>no.fxplagiarismchecker.Starter</mainClass>
     </properties>
     <dependencies>
         <dependency>
@@ -15,6 +16,16 @@
     <artifactId>materialfx</artifactId>
     <version>11.11.1</version>
     </dependency>
+        <dependency>
+  		<groupId>net.sourceforge.tess4j</groupId>
+  		<artifactId>tess4j</artifactId>
+  		<version>4.3.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.pdfbox</groupId>
+  		<artifactId>pdfbox</artifactId>
+  		<version>2.0.21</version>
+  	</dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -41,7 +52,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>no.fxplagiarismchecker.App</mainClass>
+                    <mainClass>no.fxplagiarismchecker.Starter</mainClass>
                 </configuration>
                 <executions>
                     <execution>
