@@ -5,7 +5,11 @@
  */
 package no.fxplagiarismchecker;
 
+import Engine.DataProcessor;
+import java.io.File;
 import java.net.URL;
+import java.util.List;
+import static java.util.Locale.filter;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -19,6 +23,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 /**
@@ -103,6 +108,33 @@ public class MainPageController implements Initializable{
         System.out.println("Reveal");
     }
     boolean hasentered=false;
+    
+    
+    @FXML
+    public void clicked_menu(Event e)
+    {
+    FileChooser fc=new FileChooser();
+    fc.setTitle("Select The Documents");
+        FileChooser.ExtensionFilter filter1=new FileChooser.ExtensionFilter("Text Files (*.txt", "*.txt");
+        FileChooser.ExtensionFilter filter2=new FileChooser.ExtensionFilter("PDF Files (*.pdf", "*.pdf");
+        FileChooser.ExtensionFilter filter3=new FileChooser.ExtensionFilter("Docs Files (*.docx", "*.docx");
+        FileChooser.ExtensionFilter filter4=new FileChooser.ExtensionFilter("HTML Files (*.html", "*.html");
+       fc.getExtensionFilters().add(filter1);
+       fc.getExtensionFilters().add(filter2);
+       fc.getExtensionFilters().add(filter3);
+       fc.getExtensionFilters().add(filter4);
+       List<File> list_of_files=null;
+    
+     if((list_of_files=fc.showOpenMultipleDialog(API.getScene().getWindow()))!=null)
+     {
+    new DataProcessor(list_of_files).Process();
+     }
+       else
+       {
+       System.out.println("It is Null");
+       }
+       
+    }
     @FXML
     public void setting_click(Event e)
     {

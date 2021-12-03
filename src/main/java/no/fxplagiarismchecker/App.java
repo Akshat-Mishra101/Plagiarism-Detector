@@ -20,6 +20,9 @@ public class App extends Application {
         scene = new Scene(loadFXML("MAIN"), 1200, 600);
         //stage.setResizable(false);
         stage.setScene(scene);
+        stage.centerOnScreen();
+        stage.setMinHeight(400);
+         stage.setMinWidth(600);
         stage.show();
     }
 

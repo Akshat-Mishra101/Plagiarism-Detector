@@ -28,9 +28,9 @@ public class Starter {
         
         
         try {
-            PDDocument document = PDDocument.load(new File("C:\\Users\\joey\\Downloads\\Akshat Mishra 19BTCSE011 ASSSNT - 3 PSY-302.pdf"));
+            PDDocument document = PDDocument.load(new File("C:\\Users\\joey\\Downloads\\Raj Mishra (cse026) practicals.pdf"));
             PDFRenderer pdfRenderer = new PDFRenderer(document);
-            int page=1;
+            int page=5;
             
             BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
             
@@ -46,7 +46,7 @@ public class Starter {
             String result = _tesseract.doOCR(tempFile); 
             System.out.println("hello world");
               System.out.println(result);
-            //  App.main(args);
+              App.main(args);
         } catch (Exception ex) {
             Logger.getLogger(Starter.class.getName()).log(Level.SEVERE, null, ex);
         }
