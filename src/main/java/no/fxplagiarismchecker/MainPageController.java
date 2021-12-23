@@ -6,6 +6,7 @@
 package no.fxplagiarismchecker;
 
 import Engine.DataProcessor;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -13,6 +14,7 @@ import static java.util.Locale.filter;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.Event;
@@ -22,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -31,7 +34,14 @@ import javafx.util.Duration;
  * @author joey
  */
 public class MainPageController implements Initializable{
-  
+    @FXML
+    MFXProgressBar mpb;
+    @FXML
+    AnchorPane notif;
+    //here
+    DataProcessor dp;
+    Thread rtx;
+    //here
     @FXML
     Text t1;
     @FXML
@@ -41,10 +51,10 @@ public class MainPageController implements Initializable{
     Text t3;
     
     @FXML
-   AnchorPane settings_pane;
+    HBox settings_pane;
     
-     @FXML
-     TextField API;
+    @FXML
+    TextField API;
     @FXML
     Spinner timeout;
     @FXML
@@ -61,11 +71,51 @@ public class MainPageController implements Initializable{
     Button settings_btn;
     @FXML
     Button close_button;
+    
     static int place[][]={{1,0},{2,100},{3,100}};
+    
+    
+    
+    
+    
+    
+    
+    
+    @FXML
+    public void close_process()
+    {
+        FadeTransition fd= new FadeTransition();
+        fd.setNode(mpb);
+        fd.setFromValue(1);
+        fd.setToValue(0);
+        
+        fd.setDelay(Duration.millis(200));
+        
+        
+        
+        FadeTransition fca= new FadeTransition();
+        fca.setNode(notif);
+        fca.setFromValue(1);
+        fca.setToValue(0);
+        
+        fca.setDelay(Duration.millis(200));
+        
+        
+        
+        ParallelTransition pt=new ParallelTransition(fd,fca);
+        pt.play();
+        
+        try{
+       rtx.stop();
+        }
+        catch(Exception e){}
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
       buttonhoverpane.setOpacity(0);
-      timeout.setStyle("-fx-background-color: -fx-control-inner-background;");
+//      timeout.setStyle("-fx-background-color: -fx-control-inner-background;");
+      settings_pane.setOpacity(0);
       t1.setOpacity(0);
       t2.setOpacity(0);
       t3.setOpacity(0);
@@ -115,19 +165,94 @@ public class MainPageController implements Initializable{
     {
     FileChooser fc=new FileChooser();
     fc.setTitle("Select The Documents");
+    
         FileChooser.ExtensionFilter filter1=new FileChooser.ExtensionFilter("Text Files (*.txt", "*.txt");
         FileChooser.ExtensionFilter filter2=new FileChooser.ExtensionFilter("PDF Files (*.pdf", "*.pdf");
         FileChooser.ExtensionFilter filter3=new FileChooser.ExtensionFilter("Docs Files (*.docx", "*.docx");
         FileChooser.ExtensionFilter filter4=new FileChooser.ExtensionFilter("HTML Files (*.html", "*.html");
+      
        fc.getExtensionFilters().add(filter1);
        fc.getExtensionFilters().add(filter2);
        fc.getExtensionFilters().add(filter3);
        fc.getExtensionFilters().add(filter4);
+       
        List<File> list_of_files=null;
+      String source =  e.getSource().toString();
+      System.out.println(source);
+      
+      
+      if(source.contains("internet_search_btno"))
+      {
+         source = "internet_search_btno";
+      }
+      else if(source.contains("compare_docs_btno"))
+      {
+           source = "compare_docs_btno";
+      }
+      
+      else{
+        source  = "search_several_articles_btno";
+      }
+     
+      
+       
+      
+      
+      
+      //Web Search 
+      
+      
+      //Search Among Documents
+      
+      //Search Between The Documents And On The Internet
+       
     
-     if((list_of_files=fc.showOpenMultipleDialog(API.getScene().getWindow()))!=null)
+       
+     if((list_of_files=fc.showOpenMultipleDialog(settings_btn.getScene().getWindow()))!=null)
      {
-    new DataProcessor(list_of_files).Process();
+  
+        FadeTransition fd= new FadeTransition();
+        fd.setNode(mpb);
+        fd.setFromValue(0);
+        fd.setToValue(1);
+        
+        fd.setDelay(Duration.millis(200));
+        
+        
+        
+        FadeTransition fca= new FadeTransition();
+        fca.setNode(notif);
+        fca.setFromValue(0);
+        fca.setToValue(1);
+        
+        fca.setDelay(Duration.millis(200));
+        
+        
+        
+        ParallelTransition pt=new ParallelTransition(fd,fca);
+        pt.play();
+        
+        
+        
+        
+        
+        
+         
+        dp = new DataProcessor(list_of_files, source);
+        
+        mpb.progressProperty().bind(dp.progressProperty());
+        
+        
+        
+        
+        
+        
+       rtx = new Thread(dp);
+        rtx.setDaemon(true);
+        
+        rtx.start();
+        
+
      }
        else
        {
@@ -141,9 +266,18 @@ public class MainPageController implements Initializable{
         
         TranslateTransition tt=new TranslateTransition(Duration.millis(300));
         tt.setNode(settings_pane);
-        tt.setToX(350);
+        tt.setToY((settings_pane.getScene().getHeight()/2)+(settings_pane.getHeight()/2));
+        tt.setInterpolator(Interpolator.EASE_OUT);
         
-        tt.play();
+        
+        FadeTransition ft=new FadeTransition(Duration.millis(200));
+        ft.setNode(settings_pane);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        
+        ParallelTransition pt=new ParallelTransition(tt,ft);
+        pt.play();
+        //tt.play();
     
     }
     
@@ -153,9 +287,16 @@ public class MainPageController implements Initializable{
      
         TranslateTransition tt=new TranslateTransition(Duration.millis(300));
         tt.setNode(settings_pane);
-        tt.setToX(-351);
+        tt.setInterpolator(Interpolator.EASE_IN);
+        tt.setToY(-460);
         
-        tt.play();
+        FadeTransition ft=new FadeTransition(Duration.millis(200));
+        ft.setNode(settings_pane);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ParallelTransition pt=new ParallelTransition(tt,ft);
+        pt.play();
+        //tt.play();
     }
     @FXML
     public void buttonAnimations(Event E)

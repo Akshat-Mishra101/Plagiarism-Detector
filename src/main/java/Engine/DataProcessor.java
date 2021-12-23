@@ -7,6 +7,7 @@ package Engine;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,29 +16,36 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
  * @author joey
  */
-public class DataProcessor {
+public class DataProcessor extends Task<Void> {
+    
+    
     List<File> filepaths;
-    public DataProcessor(List<File> filepaths)
+    String type_of_operation;
+    
+    public DataProcessor(List<File> filepaths,String type_of_operation)
     {
         this.filepaths=filepaths;
-        
+        this.type_of_operation = type_of_operation;
     }
     
     
     public void Process()
     {
         List<String> strings=new ArrayList();
-        
-     
+        List<String> docname = new ArrayList();
         filepaths.forEach(file -> {
-          
+           updateProgress(-1,100);
             if(file.getName().contains(".txt")){
             try {
+                updateMessage("Loading Files");
                 Scanner sc=new Scanner(file);
                
                 while(sc.hasNext())
@@ -46,7 +54,7 @@ public class DataProcessor {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   strings.add(st.nextToken());
-        
+                  docname.add(file.getName());
                   }
                 }
                 
@@ -58,21 +66,25 @@ public class DataProcessor {
         }
         else if(file.getName().contains(".pdf"))
         {
-        
+        //apache pdfbox to parse
         }
         else if(file.getName().contains(".docx"))
         {
-        
+        // docx for j to parse
         }
-        else if(file.getName().contains(".docx"))
+        else if(file.getName().contains(".html"))
         {
-        
+        // jsoup to parse
         }
         }
                 
            );
-        
-     
+        strings.size();
+        try {
+            Document doc=Jsoup.connect("https://www.google.co.in//").get();
+        } catch (IOException ex) {
+           updateMessage("Unable To Connect");
+        }
         
       Collections.sort(strings,Collections.reverseOrder());
      
@@ -81,5 +93,17 @@ public class DataProcessor {
       
         
        
+    }
+
+    @Override
+    protected Void call() throws Exception {
+        
+        Process();
+        
+        
+        
+        
+        return null;
+        
     }
 }
