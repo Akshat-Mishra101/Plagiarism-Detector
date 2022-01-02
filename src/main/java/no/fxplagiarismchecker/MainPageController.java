@@ -7,6 +7,7 @@ package no.fxplagiarismchecker;
 
 import Engine.DataProcessor;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -17,7 +18,9 @@ import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -34,10 +37,26 @@ import javafx.util.Duration;
  * @author joey
  */
 public class MainPageController implements Initializable{
+    
+    @FXML
+    Button savereport;
+    @FXML
+    Button previewreport;
+    
+    @FXML
+    MFXProgressSpinner msp;
+            
+    @FXML
+    MFXProgressSpinner bsp;
+    
+    @FXML
+    MFXProgressSpinner csp;
+    
+    
     @FXML
     MFXProgressBar mpb;
     @FXML
-    AnchorPane notif;
+     AnchorPane notif;
     //here
     DataProcessor dp;
     Thread rtx;
@@ -51,7 +70,7 @@ public class MainPageController implements Initializable{
     Text t3;
     
     @FXML
-    HBox settings_pane;
+    AnchorPane settings_pane;
     
     @FXML
     TextField API;
@@ -71,12 +90,25 @@ public class MainPageController implements Initializable{
     Button settings_btn;
     @FXML
     Button close_button;
+    @FXML
+    Text MainText;
+    //static int place[][]={{1,0},{2,100},{3,100}};
     
-    static int place[][]={{1,0},{2,100},{3,100}};
     
     
+    public void onEnter(Event e)
+    {
+        
+        System.out.println(e.getSource());
+        
+    String result= e.getSource().toString();
+    FadeTransition ft = new FadeTransition(Duration.millis(500));
+   // ft.setNode(notif);
+    }
+    public void onExit(){
     
     
+    }
     
     
     
@@ -110,15 +142,29 @@ public class MainPageController implements Initializable{
         }
         catch(Exception e){}
     }
+    @FXML
+     AnchorPane wind;
+    
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
       buttonhoverpane.setOpacity(0);
 //      timeout.setStyle("-fx-background-color: -fx-control-inner-background;");
-      settings_pane.setOpacity(0);
+    //  settings_pane.setOpacity(0);
       t1.setOpacity(0);
       t2.setOpacity(0);
       t3.setOpacity(0);
+      notif.setOpacity(0);
+      
+      websearch.setOpacity(0);
+      documentalsearch.setOpacity(0);
+       reportcreation.setOpacity(0);
+      
+       
+      
+      
+    
     }
     
     @FXML
@@ -161,8 +207,36 @@ public class MainPageController implements Initializable{
     
     
     @FXML
+    AnchorPane websearch;
+    @FXML
+    AnchorPane documentalsearch;
+    @FXML
+    AnchorPane reportcreation;
+    
+    @FXML
     public void clicked_menu(Event e)
+    {   
+      App.stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+    float width = (float) App.stage.getWidth();
+    
+    if(width<1120)
     {
+        System.out.println("Hello world");
+      
+    notif.setManaged(false);
+      notif.setVisible(false);
+      
+    }
+    else{
+        
+                System.out.println("Hello world1221");
+
+        notif.setManaged(true);
+         notif.setVisible(true);
+
+    }
+});
+      
     FileChooser fc=new FileChooser();
     fc.setTitle("Select The Documents");
     
@@ -180,17 +254,21 @@ public class MainPageController implements Initializable{
       String source =  e.getSource().toString();
       System.out.println(source);
       
-      
+      String ben="";
       if(source.contains("internet_search_btno"))
       {
          source = "internet_search_btno";
+         ben="websearch";
       }
       else if(source.contains("compare_docs_btno"))
       {
            source = "compare_docs_btno";
+           ben="documental";
       }
       
       else{
+          
+          ben="all";
         source  = "search_several_articles_btno";
       }
      
@@ -238,10 +316,10 @@ public class MainPageController implements Initializable{
         
         
          
-        dp = new DataProcessor(list_of_files, source);
+        dp = new DataProcessor(list_of_files, ben,websearch,documentalsearch,reportcreation,msp,bsp,csp);
         
         mpb.progressProperty().bind(dp.progressProperty());
-        
+        MainText.textProperty().bind(dp.messageProperty());
         
         
         
@@ -249,8 +327,8 @@ public class MainPageController implements Initializable{
         
        rtx = new Thread(dp);
         rtx.setDaemon(true);
-        
-        rtx.start();
+       pt.setOnFinished(event->{rtx.start();});
+       
         
 
      }
@@ -259,6 +337,10 @@ public class MainPageController implements Initializable{
        System.out.println("It is Null");
        }
        
+     
+     
+     
+     
     }
     @FXML
     public void setting_click(Event e)
@@ -266,10 +348,11 @@ public class MainPageController implements Initializable{
         
         TranslateTransition tt=new TranslateTransition(Duration.millis(300));
         tt.setNode(settings_pane);
-        tt.setToY((settings_pane.getScene().getHeight()/2)+(settings_pane.getHeight()/2));
+        tt.setToX(335);
         tt.setInterpolator(Interpolator.EASE_OUT);
+        tt.play();
         
-        
+        /**
         FadeTransition ft=new FadeTransition(Duration.millis(200));
         ft.setNode(settings_pane);
         ft.setFromValue(0);
@@ -278,6 +361,7 @@ public class MainPageController implements Initializable{
         ParallelTransition pt=new ParallelTransition(tt,ft);
         pt.play();
         //tt.play();
+        * **/
     
     }
     
@@ -288,14 +372,16 @@ public class MainPageController implements Initializable{
         TranslateTransition tt=new TranslateTransition(Duration.millis(300));
         tt.setNode(settings_pane);
         tt.setInterpolator(Interpolator.EASE_IN);
-        tt.setToY(-460);
+        tt.setToX(-331);
+        tt.play();
         
-        FadeTransition ft=new FadeTransition(Duration.millis(200));
+       /** FadeTransition ft=new FadeTransition(Duration.millis(200));
         ft.setNode(settings_pane);
         ft.setFromValue(1);
         ft.setToValue(0);
         ParallelTransition pt=new ParallelTransition(tt,ft);
         pt.play();
+        * **/
         //tt.play();
     }
     @FXML

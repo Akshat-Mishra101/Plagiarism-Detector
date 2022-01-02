@@ -26,7 +26,7 @@ public class Starter {
     public static void main(String args[])
     {
         
-        
+        /**
         try {
             PDDocument document = PDDocument.load(new File("C:\\Users\\joey\\Downloads\\Raj Mishra (cse026) practicals.pdf"));
             PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -46,9 +46,11 @@ public class Starter {
             String result = _tesseract.doOCR(tempFile); 
             System.out.println("hello world");
               System.out.println(result);
-              App.main(args);
+              
         } catch (Exception ex) {
             Logger.getLogger(Starter.class.getName()).log(Level.SEVERE, null, ex);
         }
+        * **/
+        App.main(args);
     }
 }
