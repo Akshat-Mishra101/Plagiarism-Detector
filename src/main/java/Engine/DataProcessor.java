@@ -179,7 +179,20 @@ public class DataProcessor extends Task<Void> {
                try {
                    // jsoup to parse
                    String entire_text = Jsoup.parse(file, "UTF-8").text();
-                   System.out.println(entire_text);
+                     Scanner sd=new Scanner(entire_text);
+                while(sd.hasNext())
+                {
+                updateMessage("Extracting Text");
+                StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
+                  // tokenize the Strings
+                  while(st.hasMoreTokens()){
+                  strings.add(st.nextToken());
+                  docname.add(file.getName());
+                  }
+                
+                }
+                   
+                   
                } catch (Exception ex) {
                    Logger.getLogger(DataProcessor.class.getName()).log(Level.SEVERE, null, ex);
                }
@@ -252,6 +265,13 @@ public class DataProcessor extends Task<Void> {
                 @Override
                 protected Void call() throws Exception {
                     updateProgress(-1,100);
+                    
+                    
+                    
+                    PLBOT.search("", 25000);
+                    
+                   
+                    
                     return null;
                 }
             };

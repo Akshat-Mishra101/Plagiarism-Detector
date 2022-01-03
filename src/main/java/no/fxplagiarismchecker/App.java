@@ -24,17 +24,14 @@ public class App extends Application {
         this.stage= stage;
         this.stage.setScene(scene);
         this.stage.centerOnScreen();
-        this.stage.setMinHeight(600);
+        this.stage.setMinHeight(620);
         this.stage.setMinWidth(600);
         
         
         
         this.stage.show();
         
-       
-      App.stage.heightProperty().addListener((obs, oldVal, newVal) -> {
-    System.out.println(App.stage.getHeight());
-});
+    
         
     }
 

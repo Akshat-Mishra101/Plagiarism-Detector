@@ -352,16 +352,9 @@ public class MainPageController implements Initializable{
         tt.setInterpolator(Interpolator.EASE_OUT);
         tt.play();
         
-        /**
-        FadeTransition ft=new FadeTransition(Duration.millis(200));
-        ft.setNode(settings_pane);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-        
-        ParallelTransition pt=new ParallelTransition(tt,ft);
-        pt.play();
-        //tt.play();
-        * **/
+       
+       
+       
     
     }
     
@@ -375,14 +368,7 @@ public class MainPageController implements Initializable{
         tt.setToX(-331);
         tt.play();
         
-       /** FadeTransition ft=new FadeTransition(Duration.millis(200));
-        ft.setNode(settings_pane);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ParallelTransition pt=new ParallelTransition(tt,ft);
-        pt.play();
-        * **/
-        //tt.play();
+       
     }
     @FXML
     public void buttonAnimations(Event E)
