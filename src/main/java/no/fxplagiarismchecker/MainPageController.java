@@ -6,17 +6,22 @@
 package no.fxplagiarismchecker;
 
 import Engine.DataProcessor;
+import Engine.Properties;
+import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import io.github.palexdev.materialfx.controls.MFXRadioButton;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 import static java.util.Locale.filter;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
+import javafx.animation.FillTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -28,6 +33,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -37,7 +43,31 @@ import javafx.util.Duration;
  * @author joey
  */
 public class MainPageController implements Initializable{
+    @FXML
+    Button savec;
+    @FXML
+    Button resetd;
     
+    @FXML
+    MFXRadioButton partial;
+    @FXML
+    MFXRadioButton complete;
+    
+    @FXML
+    TextField sphrases;
+    @FXML
+    TextField slines;
+    @FXML
+    MFXCheckbox google;
+    
+    @FXML
+    MFXCheckbox bing;
+    
+    @FXML
+    MFXCheckbox duck;
+    
+    @FXML
+    TextField maxresults;
     @FXML
     Button savereport;
     @FXML
@@ -92,22 +122,91 @@ public class MainPageController implements Initializable{
     Button close_button;
     @FXML
     Text MainText;
-    //static int place[][]={{1,0},{2,100},{3,100}};
     
     
+    
+    @FXML
+    Button bt1;
+    @FXML
+    Button bt2;
+    
+    String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};
     
     public void onEnter(Event e)
     {
         
-        System.out.println(e.getSource());
+    System.out.println(e.getSource());
         
     String result= e.getSource().toString();
-    FadeTransition ft = new FadeTransition(Duration.millis(500));
+    
+     ScaleTransition tt=new ScaleTransition(Duration.millis(100));
+    
+    tt.setToX(1.05);
+    tt.setToY(1.05);
+    
+   
+    
+    if(result.contains("bt1"))
+    {
+        bt1.setStyle("-fx-background-color:#fff");
+       tt.setNode(bt1);
+    }
+    else if(result.contains("bt2")){
+        bt2.setStyle("-fx-background-color:#fff");
+    tt.setNode(bt2);
+    }
+    else if(result.contains("Save Changes"))
+    {
+       savec.setStyle("-fx-background-color:#fff");
+       tt.setNode(savec);
+    }
+    else if(result.contains("Reset Defaults")){
+    resetd.setStyle("-fx-background-color:#fff");
+    tt.setNode(resetd);
+    }
+    tt.play();
+    
+   
+    
    // ft.setNode(notif);
     }
-    public void onExit(){
+    public void onExit(Event e){
+      
+       System.out.println(e.getSource());
+        
+    String result= e.getSource().toString();
+    //FadeTransition ft = new FadeTransition(Duration.millis(500));
+     ScaleTransition tt=new ScaleTransition(Duration.millis(100));
+    
+    tt.setToX(1);
+    tt.setToY(1);
+    
+   
+    
+    if(result.contains("bt1"))
+    {
+        bt1.setStyle("-fx-background-color:#f1f1f1");
+       tt.setNode(bt1);
+    }
+    else if(result.contains("bt2")){
+        bt2.setStyle("-fx-background-color:#f1f1f1");
+    tt.setNode(bt2);
+    }
+    else if(result.contains("Save Changes"))
+    {
+       savec.setStyle("-fx-background-color:#f1f1f1");
+       tt.setNode(savec);
+    }
+    else if(result.contains("Reset Defaults")){
+    resetd.setStyle("-fx-background-color:#f1f1f1");
+       tt.setNode(resetd);
+    }
     
     
+    
+    tt.play();
+    
+        
     }
     
     
@@ -160,12 +259,87 @@ public class MainPageController implements Initializable{
       websearch.setOpacity(0);
       documentalsearch.setOpacity(0);
        reportcreation.setOpacity(0);
-      
-       
+      Properties.loadFiles();
+       load();
       
       
     
     }
+    public void load()
+    {
+    
+       google.setSelected(false);
+       bing.setSelected(false);
+       duck.setSelected(false);
+        API.setText(Properties.getValue(defaults[0][0]));
+        maxresults.setText(Properties.getValue(defaults[0][1]));
+        
+        
+        String values[] = Properties.getValue(defaults[0][2]).split(",");
+        for(String value:values){
+            if(value.equals("G"))
+                google.setSelected(true);
+            else if(value.equals("B"))
+                bing.setSelected(true);
+            else if(value.equals("D"))
+                duck.setSelected(true);
+                
+        
+        }
+        
+        sphrases.setText(Properties.getValue(defaults[0][4]));
+        slines.setText(Properties.getValue(defaults[0][5]));
+        
+        
+        if(Properties.getValue(defaults[0][3]).equals("Partial"))
+        {
+        partial.setSelected(true);
+        }
+        else if(Properties.getValue(defaults[0][3]).equals("Complete"))
+        {
+        complete.setSelected(true);
+        }
+        
+    }
+    
+    @FXML
+    public void resetDefaults() throws Exception
+    {
+       
+        for(int i = 0;i<6;i++)
+        {
+        Properties.Update(defaults[0][i], defaults[1][i]);
+        }
+        Properties.Save();
+        load();
+        
+    }
+    
+    @FXML
+    public void Savechanges() throws Exception
+    {  String engines="";
+        if(google.isSelected())
+        {
+        engines+="G,";
+        }
+        if(bing.isSelected())
+        {
+        engines+="B,";
+        }
+        if(duck.isSelected())
+        {
+        engines+="D,";
+        }
+        
+        String updatesValues[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{API.getText(),maxresults.getText(),engines,partial.isSelected()?"Partial":"Complete",sphrases.getText(),slines.getText()}};;
+        for(int i = 0;i<6;i++)
+        {
+        Properties.Update(updatesValues[0][i], updatesValues[1][i]);
+        }
+        Properties.Save();
+        
+    }
+    
     
     @FXML
     public void reveal_and_hide(Event e)
@@ -201,7 +375,7 @@ public class MainPageController implements Initializable{
               fd.setNode(t3);
         }
         fd.play();
-        System.out.println("Reveal");
+       
     }
     boolean hasentered=false;
     
@@ -221,7 +395,7 @@ public class MainPageController implements Initializable{
     
     if(width<1120)
     {
-        System.out.println("Hello world");
+       
       
     notif.setManaged(false);
       notif.setVisible(false);
@@ -229,7 +403,7 @@ public class MainPageController implements Initializable{
     }
     else{
         
-                System.out.println("Hello world1221");
+             
 
         notif.setManaged(true);
          notif.setVisible(true);
@@ -252,7 +426,7 @@ public class MainPageController implements Initializable{
        
        List<File> list_of_files=null;
       String source =  e.getSource().toString();
-      System.out.println(source);
+     
       
       String ben="";
       if(source.contains("internet_search_btno"))
@@ -375,7 +549,7 @@ public class MainPageController implements Initializable{
     {
     
     String source=E.getSource().toString();
-    System.out.println(source);
+   
     if(source.contains("settings_btn"))
     {
      RotateTransition rt=new RotateTransition(Duration.millis(200));
@@ -393,7 +567,7 @@ public class MainPageController implements Initializable{
     fd.setToValue(0.1);
     fd.play();
     
-    System.out.println(source+" is this");
+    
     
     if(source.contains("btno"))
     {

@@ -265,8 +265,15 @@ public class DataProcessor extends Task<Void> {
                 @Override
                 protected Void call() throws Exception {
                     updateProgress(-1,100);
+                    if(Properties.getValue("plagcheck").equals("Partial"))
+                    {
+                        //Extract three longest strings
+                       
+                    }
+                    else
+                    {
                     
-                    
+                    }
                     
                     PLBOT.search("", 25000);
                     
@@ -337,6 +344,9 @@ public class DataProcessor extends Task<Void> {
         
         
         fd2.setOnFinished(event->{
+            //traverse through the other documents to search for plag
+            
+            
         fd3.play();
         });
         
@@ -381,6 +391,9 @@ public class DataProcessor extends Task<Void> {
         fd2.setOnFinished(event->{
         fd3.play();
         });
+        
+        
+        fd3.setOnFinished(event->{});
         
         
         

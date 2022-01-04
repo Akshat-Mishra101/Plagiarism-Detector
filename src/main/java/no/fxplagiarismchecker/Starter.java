@@ -5,6 +5,7 @@
  */
 package no.fxplagiarismchecker;
 
+import Engine.Properties;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +24,28 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class Starter {
     
-    public static void main(String args[])
+    public static void main(String args[]) throws Exception
     {
+        if(!new File(".data").exists())
+        {
+        String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};
+        for(int i = 0;i<6;i++)
+        {
+        Properties.Update(defaults[0][i], defaults[1][i]);
+        }
+        Properties.Save();
+        
+        System.out.println("Running For The First Time");
+        
+        for(int i = 0;i<6;i++)
+        {
+        
+        System.out.println(Properties.getValue(defaults[0][i])+"_");
+        }
+        
+        }
+        
+        
         
         /**
         try {

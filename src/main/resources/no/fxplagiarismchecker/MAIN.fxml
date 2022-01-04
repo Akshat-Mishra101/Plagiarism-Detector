@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -111,38 +112,38 @@
                   <MFXProgressSpinner fx:id="csp" layoutX="183.0" layoutY="15.0" progress="1.0" />
                </children>
             </AnchorPane>
-            <Button layoutX="22.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Save Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.leftAnchor="22.0" />
-            <Button layoutX="194.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Preview Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.rightAnchor="14.0" />
+            <Button fx:id="bt1" layoutX="22.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Save Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.leftAnchor="22.0" />
+            <Button fx:id="bt2" layoutX="194.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Preview Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.rightAnchor="14.0" />
             <Text layoutX="22.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Plagairism Report Complete" wrappingWidth="229.0296630859375">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Text>
-            <Text fx:id="MainText" layoutX="17.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="89.60000000000002">
+            <Text fx:id="MainText" layoutX="12.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="282.4000000000001">
                <font>
-                  <Font size="14.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="settings_pane" layoutX="14.0" layoutY="6.0" prefHeight="648.0" prefWidth="330.0" style="-fx-background-color: #f6f6f6; -fx-background-radius: 10;" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="6.0">
+      <AnchorPane fx:id="settings_pane" layoutX="-331.0" layoutY="6.0" prefHeight="648.0" prefWidth="330.0" style="-fx-background-color: #f6f6f6; -fx-background-radius: 10;" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="-331.0" AnchorPane.topAnchor="6.0">
          <children>
             <Button layoutX="283.0" layoutY="14.0" mnemonicParsing="false" onAction="#close_button" prefHeight="16.0" prefWidth="30.0" style="-fx-shape: &quot;M55.931,47.463L94.306,9.09c0.826-0.827,0.826-2.167,0-2.994L88.833,0.62C88.436,0.224,87.896,0,87.335,0c-0.562,0-1.101,0.224-1.498,0.62L47.463,38.994L9.089,0.62c-0.795-0.795-2.202-0.794-2.995,0L0.622,6.096c-0.827,0.827-0.827,2.167,0,2.994l38.374,38.373L0.622,85.836c-0.827,0.827-0.827,2.167,0,2.994l5.473,5.476c0.397,0.396,0.936,0.62,1.498,0.62s1.1-0.224,1.497-0.62l38.374-38.374l38.374,38.374c0.397,0.396,0.937,0.62,1.498,0.62s1.101-0.224,1.498-0.62l5.473-5.476c0.826-0.827,0.826-2.167,0-2.994L55.931,47.463z&quot;; -fx-background-color: #000;" text=" " />
-            <TextField fx:id="API1" layoutX="19.0" layoutY="64.0" prefHeight="26.0" prefWidth="263.0" promptText="Proxy API" style="-fx-background-color: #f2f2f2;" AnchorPane.leftAnchor="19.0" AnchorPane.topAnchor="64.0" />
-            <TextField layoutX="19.0" layoutY="107.0" prefHeight="26.0" prefWidth="263.0" style="-fx-background-color: #f2f2f2;" AnchorPane.leftAnchor="19.0" AnchorPane.topAnchor="107.0" />
-            <Button layoutX="27.0" layoutY="500.0" mnemonicParsing="false" style="-fx-background-color: #f2f2f2;" text="Save Changes" AnchorPane.bottomAnchor="24.799999999999955" />
-            <Button layoutX="215.0" layoutY="500.0" mnemonicParsing="false" style="-fx-background-color: #f2f2f2;" text="Reset Defaults" AnchorPane.bottomAnchor="24.799999999999955" />
+            <TextField fx:id="API" layoutX="19.0" layoutY="64.0" prefHeight="26.0" prefWidth="263.0" promptText="Proxy API" style="-fx-background-color: #fff;" AnchorPane.leftAnchor="19.0" AnchorPane.topAnchor="64.0" />
+            <TextField fx:id="maxresults" layoutX="19.0" layoutY="107.0" prefHeight="26.0" prefWidth="263.0" promptText="Max Results" style="-fx-background-color: #fff;" AnchorPane.leftAnchor="19.0" AnchorPane.topAnchor="107.0" />
+            <Button fx:id="savec" layoutX="27.0" layoutY="500.0" mnemonicParsing="false" onAction="#Savechanges" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Save Changes" AnchorPane.bottomAnchor="24.799999999999955" />
+            <Button fx:id="resetd" layoutX="215.0" layoutY="500.0" mnemonicParsing="false" onAction="#resetDefaults" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Reset Defaults" AnchorPane.bottomAnchor="24.799999999999955" />
             <Text layoutX="21.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search Engines">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <MFXCheckbox layoutX="23.0" layoutY="188.0" text="Google" />
-            <MFXCheckbox layoutX="23.0" layoutY="212.0" text="Bing" />
-            <MFXCheckbox layoutX="23.0" layoutY="236.0" text="DuckDuck Go" />
+            <MFXCheckbox fx:id="google" layoutX="23.0" layoutY="188.0" text="Google" />
+            <MFXCheckbox fx:id="bing" layoutX="23.0" layoutY="212.0" text="Bing" />
+            <MFXCheckbox fx:id="duck" layoutX="23.0" layoutY="236.0" text="DuckDuck Go" />
             <Separator layoutX="4.0" layoutY="295.0" prefHeight="3.0" prefWidth="326.0" />
-            <TextField layoutX="27.0" layoutY="330.0" prefHeight="26.0" prefWidth="263.0" promptText="Skippable Phrases" style="-fx-background-color: #f2f2f2;" />
-            <TextField layoutX="27.0" layoutY="374.0" prefHeight="26.0" prefWidth="263.0" promptText="Skippable Lines" style="-fx-background-color: #fff;" />
+            <TextField fx:id="sphrases" layoutX="27.0" layoutY="330.0" prefHeight="26.0" prefWidth="263.0" promptText="Skippable Phrases" style="-fx-background-color: #fff;" />
+            <TextField fx:id="slines" layoutX="27.0" layoutY="374.0" prefHeight="26.0" prefWidth="263.0" promptText="Skippable Lines" style="-fx-background-color: #fff;" />
             <Text layoutX="27.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Settings">
                <font>
                   <Font name="System Bold" size="23.0" />
@@ -153,8 +154,11 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <MFXRadioButton layoutX="31.0" layoutY="465.0" text="Complete Search" />
-            <MFXRadioButton layoutX="30.0" layoutY="499.0" text="Partial Search" />
+            <MFXRadioButton fx:id="complete" layoutX="31.0" layoutY="465.0" text="Complete Search">
+               <toggleGroup>
+                  <ToggleGroup fx:id="plagmode" />
+               </toggleGroup></MFXRadioButton>
+            <MFXRadioButton fx:id="partial" layoutX="30.0" layoutY="499.0" selected="true" text="Partial Search" toggleGroup="$plagmode" />
          </children>
       </AnchorPane>
    </children>
