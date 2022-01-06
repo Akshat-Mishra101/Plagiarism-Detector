@@ -74,7 +74,7 @@ public class DataProcessor extends Task<Void> {
     {
         
         List<String> strings=new ArrayList();
-        List<String> docname = new ArrayList();
+        
         filepaths.forEach(file -> {
             
            updateMessage("Reading File");
@@ -90,8 +90,7 @@ public class DataProcessor extends Task<Void> {
                   StringTokenizer st=new StringTokenizer(sc.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                  strings.add(st.nextToken());
-                  docname.add(file.getName());
+                  strings.add(st.nextToken()+"|"+file.getName());
                   }
                 }
                 
@@ -134,8 +133,7 @@ public class DataProcessor extends Task<Void> {
                 StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                  strings.add(st.nextToken());
-                  docname.add(file.getName());
+                  strings.add(st.nextToken()+"|"+file.getName());
                   }
                 
                 }
@@ -153,6 +151,7 @@ public class DataProcessor extends Task<Void> {
         { // apache poi
                try {
                    XWPFDocument doc = new XWPFDocument(new FileInputStream(file));
+                   
                   
                   List<XWPFParagraph> list = doc.getParagraphs();
             for (XWPFParagraph paragraph : list) {
@@ -160,11 +159,10 @@ public class DataProcessor extends Task<Void> {
                 //from these paragraphs we extract the text
                // System.out.println(paragraph.getText()+"\n___________________________________\n");
                 
-                StringTokenizer sd = new StringTokenizer(paragraph.getText());
+                StringTokenizer sd = new StringTokenizer(paragraph.getText(),".!?");
                 while(sd.hasMoreElements())
                 {
-                strings.add(sd.nextToken());
-                 docname.add(file.getName());
+                strings.add(sd.nextToken()+"|"+file.getName());
                 }
                 
             }
@@ -179,15 +177,15 @@ public class DataProcessor extends Task<Void> {
                try {
                    // jsoup to parse
                    String entire_text = Jsoup.parse(file, "UTF-8").text();
-                     Scanner sd=new Scanner(entire_text);
+                   Scanner sd=new Scanner(entire_text);
                 while(sd.hasNext())
                 {
                 updateMessage("Extracting Text");
                 StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                  strings.add(st.nextToken());
-                  docname.add(file.getName());
+                  strings.add(st.nextToken()+"|"+file.getName());
+                 
                   }
                 
                 }
@@ -207,28 +205,14 @@ public class DataProcessor extends Task<Void> {
         
         //se
         updateMessage("Text Extraction Complete");
-        
-        try {
-            Document doc=Jsoup.connect("https://www.google.co.in//").get();
-        } catch (IOException ex) {
-           updateMessage("Unable To Connect");
-        }
-        
-      Collections.sort(strings,Collections.reverseOrder());
-     
-      strings.forEach(str->System.out.println(str));
-      System.out.println(strings);
-        
-        
-        
-        
-        
-        
-        
+
         if(type_of_operation.equals("websearch"))
         {
             documentalsearch.setDisable(true);
-            documentalsearch.setStyle("-fx-background-color: #f9f9f9;");
+           // documentalsearch.setStyle("-fx-background-color: #f9f9f9;");
+            
+            
+            
             FadeTransition fd2=new FadeTransition(Duration.millis(500));
         fd2.setNode(documentalsearch);
         
@@ -248,6 +232,16 @@ public class DataProcessor extends Task<Void> {
         fd3.play();
         });
        
+         fd3.setOnFinished(event->{
+         //Create The Plagiarism Report
+         
+         
+         
+         
+         });
+         
+         
+         
             System.out.println("Animations");
         FadeTransition fd=new FadeTransition(Duration.millis(500));
         fd.setNode(websearch);
@@ -265,17 +259,82 @@ public class DataProcessor extends Task<Void> {
                 @Override
                 protected Void call() throws Exception {
                     updateProgress(-1,100);
+                    Collections.sort(strings);
+                    int size = strings.size();
+                    
+                    
+                    boolean array[];
+                    
+                    
                     if(Properties.getValue("plagcheck").equals("Partial"))
                     {
+                        
+                        array=new boolean[3];
+                    
+                    }
+                    else
+                    {
+                    array=new boolean[size];
+                    }
+                    int c = 0;
+                    Iterator stri = strings.iterator();
+                   
+                    
+                    
+                    
+                    while(stri.hasNext()){
+                        double progress=(double)((c+1)/size)*100;
+                        System.out.println(progress+"%");
+                        updateProgress(progress,100);
+                        
+                  
+                        
+                        c++;
+                        System.out.println(c+"c perent %");
+                    String sr = (String) stri.next();
+                    if(Properties.getValue("plagcheck").equals("Partial"))
+                    {
+                        
+                        
                         //Extract three longest strings
+                        String filename = sr.substring(sr.lastIndexOf("|")+1, sr.length());
+                       
+                        
+                        String str = sr.substring(0, sr.lastIndexOf("|"));
+                         array[c-1] = PLBOT.search(str, 250000);
+                        if(c == 3)
+                        {
+                             
+                            updateProgress(100,100);
+                            break;
+                             
+                        }
+                           
                        
                     }
                     else
                     {
-                    
+                       
+                      String filename = sr.substring(sr.lastIndexOf("|")+1, sr.length());
+                       
+                        
+                       String str = sr.substring(0, sr.lastIndexOf("|"));
+                       array[c-1] = PLBOT.search(str, 250000);
+                       
+                       
+                        
+                        
                     }
+                    }
+                    updateProgress(100,100);
+                int line = 0; 
+                Iterator tx=strings.iterator();
+               for(boolean bool:array)
+               {
+                  
+                   System.out.println(bool+" |"+tx.next());
+               }
                     
-                    PLBOT.search("", 25000);
                     
                    
                     
@@ -286,12 +345,12 @@ public class DataProcessor extends Task<Void> {
             Thread rtx=new Thread(T);
             rtx.start();
            T.setOnSucceeded(e ->{
-               System.out.println("Animations2here2");
+               
        fd2.play();
            });
         
         });
-         System.out.println("Animationshere");
+        
         
         
         
@@ -405,7 +464,7 @@ public class DataProcessor extends Task<Void> {
         
         
         
-        
+   
         
         
       

@@ -26,9 +26,7 @@ public class App extends Application {
         this.stage.centerOnScreen();
         this.stage.setMinHeight(620);
         this.stage.setMinWidth(600);
-        
-        
-        
+
         this.stage.show();
         
     

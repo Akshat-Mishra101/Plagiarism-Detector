@@ -132,19 +132,46 @@ public class MainPageController implements Initializable{
     
     String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};
     
-    public void onEnter(Event e)
+    @FXML
+    public void onClick(Event e)
     {
-        
-    System.out.println(e.getSource());
-        
+      String result = e.getSource().toString();
+      if(result.contains("bt1"))
+      {
+        bt1.setStyle("-fx-background-color:#fff");
+
+      }
+      else if(result.contains("bt2")){
+        bt2.setStyle("-fx-background-color:#fff");
+  
+      }
+      else if(result.contains("Save Changes"))
+      {
+       savec.setStyle("-fx-background-color:#fff");
+
+      }
+      else if(result.contains("Reset Defaults")){
+      resetd.setStyle("-fx-background-color:#fff");
+
+      }
+      
+      
+      
+      
+    }
+    
+    
+    
+    public void onEnter(Event e)
+    {   
     String result= e.getSource().toString();
     
-     ScaleTransition tt=new ScaleTransition(Duration.millis(100));
+    ScaleTransition tt=new ScaleTransition(Duration.millis(100));
     
     tt.setToX(1.05);
     tt.setToY(1.05);
     
-   
+    
     
     if(result.contains("bt1"))
     {
@@ -171,9 +198,7 @@ public class MainPageController implements Initializable{
    // ft.setNode(notif);
     }
     public void onExit(Event e){
-      
-       System.out.println(e.getSource());
-        
+     
     String result= e.getSource().toString();
     //FadeTransition ft = new FadeTransition(Duration.millis(500));
      ScaleTransition tt=new ScaleTransition(Duration.millis(100));
@@ -345,7 +370,7 @@ public class MainPageController implements Initializable{
     public void reveal_and_hide(Event e)
     {
          FadeTransition fd=new FadeTransition(Duration.millis(200));
-        System.out.println(e.getEventType());
+       
         if(e.getEventType().toString().contains("EXITED"))
         {
         fd.setToValue(0);

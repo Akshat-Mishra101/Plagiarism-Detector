@@ -17,6 +17,8 @@ import net.sourceforge.tess4j.Tesseract;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
@@ -26,6 +28,9 @@ public class Starter {
     
     public static void main(String args[]) throws Exception
     {
+        
+        
+       // Document doc=Jsoup.connect("https://www.google.com/search?q=\"A+progressive+industry+such+as+IT+shouldn't+be+held+back+by+paperwork\"").get();
         if(!new File(".data").exists())
         {
         String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};

@@ -48,7 +48,10 @@ public class PLBOT {
     newer=newer.replace("—", "");
     newer=newer.replace("“", "");
    boolean flag=false;
-    String query="https://www.google.com/search?q="+"\""+newer+"\""+"&hl=en";
+  
+   
+   
+    String query="https://www.google.com/search?q="+"\""+newer+"\"";//+"&hl=en";
     //"http://api.scraperapi.com?api_key="+ProjectProperties.getProperty("apikey")+"&url="+//
      System.out.println(query); 
           

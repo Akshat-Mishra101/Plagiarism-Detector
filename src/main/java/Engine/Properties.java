@@ -17,6 +17,8 @@ import java.util.logging.Logger;
  * @author joey
  */
 public class Properties {
+    
+    public static volatile boolean isReady = false;
     public static String proxyAPI;
     public static String numberOfResults;
     public static String searchEngine;
@@ -27,6 +29,8 @@ public class Properties {
     
     public static String skippablePhrases;
     public static String skippableLines;
+    
+    
     
     public static void loadFiles()
     {
