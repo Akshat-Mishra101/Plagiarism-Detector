@@ -168,8 +168,8 @@ public class MainPageController implements Initializable{
     
     ScaleTransition tt=new ScaleTransition(Duration.millis(100));
     
-    tt.setToX(1.05);
-    tt.setToY(1.05);
+    tt.setToX(1.01);
+    tt.setToY(1.01);
     
     
     
@@ -526,6 +526,7 @@ public class MainPageController implements Initializable{
         
        rtx = new Thread(dp);
         rtx.setDaemon(true);
+        
        pt.setOnFinished(event->{rtx.start();});
        
         

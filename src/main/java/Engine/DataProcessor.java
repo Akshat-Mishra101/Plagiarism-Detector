@@ -65,18 +65,48 @@ public class DataProcessor extends Task<Void> {
         this.msp=msp;
         this.csp=csp;
         this.bsp =bsp;
+        
+        if(type_of_operation.equals("websearch"))
+            Properties.type = ReportType.WEB;
+        else if(type_of_operation.equals("documental"))
+            Properties.type=ReportType.INTERDOC;
+        else
+            Properties.type=ReportType.COMPLETE;
+        
+        
+        Properties.plagpercentage = new String[2][filepaths.size()];
+        Properties.total_words_per_file = new int[filepaths.size()];
+        System.out.println(filepaths.size());
+        System.out.println(Properties.plagpercentage.length);
+        
+        int count = 0;
+        
+        for(File file:filepaths)
+        {
+            System.out.println("Counter "+count);
+        Properties.plagpercentage[0][count] = file.getName();
+        Properties.plagpercentage[1][count] = "";
+        Properties.total_words_per_file[count] = 0;
+        count++;
+       
+        }
+        
+        
+        
+        
     }
     
     public void reset(){
     
     }
-    public void Process()
+    public void Process() throws IOException
     {
         
-        List<String> strings=new ArrayList();
+        List<String> strings=new ArrayList();//stores the text along with the filenames
         
+        int array_pos=0;
         filepaths.forEach(file -> {
-            
+            int totalwords = 0;
            updateMessage("Reading File");
            updateProgress(-1,100);
             if(file.getName().contains(".txt")){
@@ -91,6 +121,7 @@ public class DataProcessor extends Task<Void> {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   strings.add(st.nextToken()+"|"+file.getName());
+                  
                   }
                 }
                 
@@ -200,6 +231,65 @@ public class DataProcessor extends Task<Void> {
         }
               
            );
+         updateMessage("Bifurcating Data");
+        String resultant[][]=Properties.plagpercentage;
+        //
+        int counter= 0;
+        System.out.println("HERE");
+        for(String filename:resultant[0])
+        {
+          System.out.print(filename+":");
+        for(String str:strings)
+        {
+             System.out.print(str+",");
+             try{
+            
+            if(str.substring(str.lastIndexOf("|")+1).equals(filename))
+            {
+            
+            resultant[1][counter] += str.substring(0,str.lastIndexOf("|"))+",";
+            }
+             }
+             catch(Exception e){
+             System.out.println(e);
+             }
+            
+            
+           
+        }
+        counter++;
+    
+        }
+        
+        updateMessage("Bifurcation Complete");
+        
+        
+        //Now Perform The Plag Check As Defined
+        
+        
+        
+        System.out.println("HERE ALSO");
+       
+        
+       
+        updateProgress(10,100);
+        
+        
+        
+       
+           updateMessage("Bifurcation Complete");
+           
+           //printing the results
+           
+            
+           
+           
+           
+           //result print over
+           
+        
+        
+       
        // strings.size();
         //searching the web
         
@@ -209,7 +299,7 @@ public class DataProcessor extends Task<Void> {
         if(type_of_operation.equals("websearch"))
         {
             documentalsearch.setDisable(true);
-           // documentalsearch.setStyle("-fx-background-color: #f9f9f9;");
+          
             
             
             
@@ -228,14 +318,24 @@ public class DataProcessor extends Task<Void> {
         
         fd3.setToValue(1);
          fd2.setOnFinished(event->{
-            System.out.println("Animations3");
+           
         fd3.play();
         });
        
          fd3.setOnFinished(event->{
          //Create The Plagiarism Report
+         Task<Void> report_creation = new Task(){
+             @Override
+             protected Object call() throws Exception {
+                    updateMessage("Creating Report");                 
+                    ReportCreator.CreateReport();
+                    
+                    updateMessage("Report Complete");
+                 return null;
+             }
          
-         
+         };
+         Properties.isReady = false;
          
          
          });
@@ -258,86 +358,101 @@ public class DataProcessor extends Task<Void> {
             Task<Void> T= new Task<>(){
                 @Override
                 protected Void call() throws Exception {
-                    updateProgress(-1,100);
-                    Collections.sort(strings);
-                    int size = strings.size();
-                    
-                    
-                    boolean array[];
-                    
-                    
-                    if(Properties.getValue("plagcheck").equals("Partial"))
-                    {
-                        
-                        array=new boolean[3];
-                    
-                    }
-                    else
-                    {
-                    array=new boolean[size];
-                    }
-                    int c = 0;
-                    Iterator stri = strings.iterator();
-                   
-                    
-                    
-                    
-                    while(stri.hasNext()){
-                        double progress=(double)((c+1)/size)*100;
-                        System.out.println(progress+"%");
-                        updateProgress(progress,100);
-                        
-                  
-                        
-                        c++;
-                        System.out.println(c+"c perent %");
-                    String sr = (String) stri.next();
-                    if(Properties.getValue("plagcheck").equals("Partial"))
-                    {
-                        
-                        
-                        //Extract three longest strings
-                        String filename = sr.substring(sr.lastIndexOf("|")+1, sr.length());
-                       
-                        
-                        String str = sr.substring(0, sr.lastIndexOf("|"));
-                         array[c-1] = PLBOT.search(str, 250000);
-                        if(c == 3)
-                        {
-                             
-                            updateProgress(100,100);
-                            break;
-                             
-                        }
-                           
-                       
-                    }
-                    else
-                    {
-                       
-                      String filename = sr.substring(sr.lastIndexOf("|")+1, sr.length());
-                       
-                        
-                       String str = sr.substring(0, sr.lastIndexOf("|"));
-                       array[c-1] = PLBOT.search(str, 250000);
-                       
-                       
-                        
-                        
-                    }
-                    }
-                    updateProgress(100,100);
-                int line = 0; 
-                Iterator tx=strings.iterator();
-               for(boolean bool:array)
+                //here we check for plagairism 
+                    int row=0;
+            for(String filename:resultant[0])
+            {
+            double progress=(double)((row+1)/resultant[0].length)*100;
+            System.out.println(progress+"%");
+           updateProgress(progress,100);
+            
+           System.out.println(filename+" : "+resultant[1][row]);
+          
+           
+           String resultset = resultant[1][row];
+           if(resultset.trim().length() <= 2)
+           {
+              //insufficient data
+              //updateMessage();
+           }
+           else{
+              
+            
+               List<String> list = new ArrayList<>();
+               String results[] = resultset.split(",");
+               
+               for(String individual:results)
                {
+                  list.add(individual);
                   
-                   System.out.println(bool+" |"+tx.next());
+                  
                }
-                    
-                    
+               
+               
+               Collections.sort(list);
+               
+               
+               int count = 0;
+               String processed = "";
+             for(String individual_strings:list)
+             {
+                
+               if(Properties.getValue("plagcheck").equals("Partial")) {       
+               if(individual_strings.length()>3)
+               {
+                 
+                   //perform a plag check
+                  
+                  boolean result = PLBOT.search(individual_strings, 250000);
+                  String formulated = individual_strings+"|"+result;
+                  
+                 processed += formulated + ",";
+                  
+                  
+                  count++;
+                  if(count == 3)
+                  {
+                  break;
+                  }
+               
+               }
+               else
+               System.out.println(individual_strings+" Omitted Because The String Is Too Small");
+               }
+               
+               else{ //full plag check
                    
-                    
+                    boolean result = PLBOT.search(individual_strings, 250000);
+                  String formulated = individual_strings+"|"+result;
+                  
+                  processed += formulated + ",";
+                  
+                  
+                 
+               
+               }
+               
+              }
+              resultant[1][row] = processed; 
+               
+           }
+           
+               
+               
+           
+           row++;
+           }
+           
+                updateMessage("Web Search Complete");
+                Properties.plagpercentage=resultant;
+                
+               
+                for(int i=0;i<Properties.plagpercentage[0].length;i++)
+                {
+                    System.out.println(Properties.plagpercentage[0][i]+" : "+Properties.plagpercentage[1][i]);
+                }
+                
+                
                     return null;
                 }
             };
@@ -466,7 +581,7 @@ public class DataProcessor extends Task<Void> {
         
    
         
-        
+     
       
         
        

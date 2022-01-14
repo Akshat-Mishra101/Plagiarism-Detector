@@ -8,6 +8,7 @@ package Engine;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,11 @@ import java.util.logging.Logger;
 public class Properties {
     
     public static volatile boolean isReady = false;
+    public static volatile List<String> names= null;
+    
+    public static String [][]plagpercentage = null;
+    public static int[]total_words_per_file = null;
+    public static volatile ReportType type;
     public static String proxyAPI;
     public static String numberOfResults;
     public static String searchEngine;
@@ -30,8 +36,8 @@ public class Properties {
     public static String skippablePhrases;
     public static String skippableLines;
     
-    
-    
+    public static String plagReport;
+    public static String reportName;
     public static void loadFiles()
     {
         try {

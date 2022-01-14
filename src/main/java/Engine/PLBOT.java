@@ -67,7 +67,9 @@ public class PLBOT {
      }
      
      }
-     else{System.out.println("query sent");}
+     else{
+         //System.out.println("query sent");
+     }
      Document doc=Jsoup.connect(query).timeout(timeout).get();
       
      
@@ -81,7 +83,7 @@ public class PLBOT {
            System.out.println(kds);
            if(kds.trim().contains("No results found for")||kds.trim().contains("did not match any documents"))
            {
-               System.out.println("yes we found it");
+               //System.out.println("yes we found it");
            flag=true;break;
            }
            }
@@ -100,7 +102,7 @@ public class PLBOT {
      
    
       String sect=doc.getElementById("result-stats").text();
-      System.out.println("Result Stats: "+sect);
+     // System.out.println("Result Stats: "+sect);
       if(sect!=null)
       {
           flag=sect.contains("About 0 results")?true:false;
@@ -109,14 +111,14 @@ public class PLBOT {
       else
       {
       
-      System.out.println(doc.text());
+      //System.out.println(doc.text());
       
       }
      gotaresult="yes";    
      }
      catch(Exception e){
       gotaresult="no";
-     System.out.println(e);
+    // System.out.println(e);
      retry++;
      
          
