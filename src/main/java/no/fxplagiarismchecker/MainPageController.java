@@ -12,6 +12,8 @@ import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.palexdev.materialfx.controls.MFXRadioButton;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import static java.util.Locale.filter;
@@ -131,7 +133,24 @@ public class MainPageController implements Initializable{
     Button bt2;
     
     String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};
-    
+    @FXML
+    public void reportCreation(Event e) throws IOException{
+        
+        if(Properties.isReady)
+        {
+        String report = Properties.plagReport;
+        FileChooser fc= new FileChooser();
+        File filer = fc.showSaveDialog(bt1.getScene().getWindow());
+        if(filer!=null)
+        {
+           FileWriter fw = new FileWriter(filer);
+           fw.write(report);
+           fw.close();
+        
+        }
+        
+        }
+    }
     @FXML
     public void onClick(Event e)
     {

@@ -39,7 +39,7 @@ public class ReportCreator {
          String sentences[]=Properties.plagpercentage[1][position].split(",");
          
          int wordcount = 0; //per sentence
-         
+         String textaddition="(";
          for(String sen:sentences)
          {
              
@@ -47,29 +47,34 @@ public class ReportCreator {
              String result = sen.substring(sen.lastIndexOf("|")+1);
              
              //String source = ""; // this string would store the source of plagiarism for this 
-            if(result.equals("true"))
+            if(result.equals("false"))
             {
               wordcount += text.split(" ").length;
+              textaddition+=text+",";
+              
               
             }
+          
+            
              
          }
+          textaddition+=")";
+         double plagpercentage =(double)((double)wordcount/(double)Properties.total_words_per_file[position])*100.0d;
          
+         list+=plagpercentage+","+textaddition+",similar-docs,"+Properties.total_words_per_file[position];
+         
+         list+="\r\n";
+         position++;
         
         }
         
-        
-         Properties.plagReport = ""
-                 + "  Report Title   "
-                 + " Type: Single/Multi-Document    "
-                 + " Mode: WebSearch, InterDocument, Complete                "
-                 + " List                "
-                 + " doc name, plagiarisim percentage, sentence-source mapping, documents-with-similar sentences                    "
-                 + "                 ";
+        report += "\r\n"+list;
+         Properties.plagReport = report;
                  
         
         // we create a text report
-     return "";  
+        
+     return list;  
     }
     public static void SaveReport(String format)
     {

@@ -104,7 +104,7 @@ public class DataProcessor extends Task<Void> {
         
         List<String> strings=new ArrayList();//stores the text along with the filenames
         
-        int array_pos=0;
+        
         filepaths.forEach(file -> {
             int totalwords = 0;
            updateMessage("Reading File");
@@ -120,7 +120,9 @@ public class DataProcessor extends Task<Void> {
                   StringTokenizer st=new StringTokenizer(sc.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                  strings.add(st.nextToken()+"|"+file.getName());
+                      String token=st.nextToken();
+                  strings.add(token+"|"+file.getName());
+                  totalwords+=token.split(" ").length;
                   
                   }
                 }
@@ -164,7 +166,9 @@ public class DataProcessor extends Task<Void> {
                 StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                  strings.add(st.nextToken()+"|"+file.getName());
+                  String token=st.nextToken();
+                  strings.add(token+"|"+file.getName());
+                  totalwords+=token.split(" ").length;
                   }
                 
                 }
@@ -193,7 +197,9 @@ public class DataProcessor extends Task<Void> {
                 StringTokenizer sd = new StringTokenizer(paragraph.getText(),".!?");
                 while(sd.hasMoreElements())
                 {
-                strings.add(sd.nextToken()+"|"+file.getName());
+                 String token=sd.nextToken();
+                  strings.add(token+"|"+file.getName());
+                  totalwords+=token.split(" ").length;
                 }
                 
             }
@@ -215,7 +221,9 @@ public class DataProcessor extends Task<Void> {
                 StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                  strings.add(st.nextToken()+"|"+file.getName());
+                   String token=st.nextToken();
+                  strings.add(token+"|"+file.getName());
+                  totalwords+=token.split(" ").length;
                  
                   }
                 
@@ -227,10 +235,14 @@ public class DataProcessor extends Task<Void> {
                }
             
         }
-            
+            Properties.total_words_per_file[Properties.array_pos]=totalwords;
+         Properties.array_pos++;    
         }
-              
+             
            );
+        Properties.array_pos =0;
+        
+        
          updateMessage("Bifurcating Data");
         String resultant[][]=Properties.plagpercentage;
         //
@@ -327,16 +339,19 @@ public class DataProcessor extends Task<Void> {
          Task<Void> report_creation = new Task(){
              @Override
              protected Object call() throws Exception {
+                 Properties.isReady = false;
                     updateMessage("Creating Report");                 
-                    ReportCreator.CreateReport();
+                    System.out.println(ReportCreator.CreateReport());
                     
                     updateMessage("Report Complete");
+                    Properties.isReady = true;
                  return null;
              }
          
          };
-         Properties.isReady = false;
          
+         Thread task_doer = new Thread(report_creation);
+         task_doer.start();
          
          });
          
@@ -515,11 +530,57 @@ public class DataProcessor extends Task<Void> {
         fd2.play();
         });
         
-        
-        
+        //a source map contains a lot of information
+        //sentence[file1]<->sentence[file2]<->....sentence[fileN] = source_url
+        Properties.source_mapping = new ArrayList<>();
         fd2.setOnFinished(event->{
             //traverse through the other documents to search for plag
-            
+            Task<Void> documentSearch = new Task<>(){
+                @Override
+                protected Void call() throws Exception {
+                    if(resultant[0].length > 1)
+                    {
+                       String file = resultant[0][0];
+                      
+                       
+                       String sentences[] = resultant[1][0].split(",");
+                       
+                       //finds all interplagiarised sentences
+                       //we start from the second element
+                       for(int i=1;i<resultant[0].length;i++)
+                       {
+                          
+                         String comparative_sentences[] = resultant[1][i].split(",");  
+                         
+                         for(String sentence:sentences)
+                         {
+                             
+                             for(String compared_sentence:comparative_sentences)
+                             {
+                                     if(sentence.equals(compared_sentence))
+                                     {
+                                         Properties.source_mapping.add(sentence+"["+file+"]<=>"+sentence+"["+resultant[0][i]+"]");
+                                     }
+                             }
+                               
+                         }
+                       
+                       }
+                       System.out.println("____________________________");
+                       Properties.source_mapping.forEach(str->{
+                       System.out.println(str);
+                       });
+                    
+                    }
+                    else{
+                    System.out.println("You Must Select Multiple Documents To Conduct The Search");
+                    }
+                    
+               return null;
+                }
+            };
+            Thread rtx=new Thread(documentSearch);
+            rtx.start();
             
         fd3.play();
         });

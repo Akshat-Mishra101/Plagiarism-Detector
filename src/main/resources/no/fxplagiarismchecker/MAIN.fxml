@@ -112,8 +112,8 @@
                   <MFXProgressSpinner fx:id="csp" layoutX="183.0" layoutY="15.0" progress="1.0" />
                </children>
             </AnchorPane>
-            <Button fx:id="bt1" layoutX="22.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Save Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.leftAnchor="22.0" />
-            <Button fx:id="bt2" layoutX="194.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Preview Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.rightAnchor="14.0" />
+            <Button fx:id="bt1" layoutX="22.0" layoutY="579.0" mnemonicParsing="false" onMouseEntered="#onEnter" onMouseExited="#onExit" onMousePressed="#reportCreation" style="-fx-background-color: #f1f1f1;" text="Save Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.leftAnchor="22.0" />
+            <Button fx:id="bt2" layoutX="194.0" layoutY="579.0" mnemonicParsing="false" onAction="#reportCreation" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1;" text="Preview Report" AnchorPane.bottomAnchor="21.799999999999976" AnchorPane.rightAnchor="14.0" />
             <Text layoutX="22.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Plagairism Report Complete" wrappingWidth="229.0296630859375">
                <font>
                   <Font name="System Bold" size="13.0" />

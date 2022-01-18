@@ -18,10 +18,10 @@ import java.util.logging.Logger;
  * @author joey
  */
 public class Properties {
-    
+    public static List<String> source_mapping;
     public static volatile boolean isReady = false;
     public static volatile List<String> names= null;
-    
+    public static int array_pos = 0;
     public static String [][]plagpercentage = null;
     public static int[]total_words_per_file = null;
     public static volatile ReportType type;
