@@ -24,7 +24,7 @@ import org.jsoup.select.Elements;
  * @author joey
  */
 public class PLBOT {
-    
+    public static String dom = "";
    
     
     
@@ -51,7 +51,7 @@ public class PLBOT {
   
    
    
-    String query="https://www.google.com/search?q="+"\""+newer+"\"";//+"&hl=en";
+    String query=Properties.proxyAPI.trim()+"https://www.google.com/search?q="+"\""+newer+"\"";//+"&hl=en";
     //"http://api.scraperapi.com?api_key="+ProjectProperties.getProperty("apikey")+"&url="+//
      System.out.println(query); 
           
@@ -68,7 +68,7 @@ public class PLBOT {
      
      }
      else{
-         //System.out.println("query sent");
+     //   System.out.println("query sent");
      }
      Document doc=Jsoup.connect(query).timeout(timeout).get();
       
@@ -80,16 +80,23 @@ public class PLBOT {
            while(itr.hasNext())
            {
            String kds=itr.next().toString();
-           System.out.println(kds);
+           //System.out.println(kds);
            if(kds.trim().contains("No results found for")||kds.trim().contains("did not match any documents"))
            {
                //System.out.println("yes we found it");
-           flag=true;break;
+               
+           flag=true;
+           break;
            }
            }
+           
            if(flag==true)
            {
            break;
+           }
+           else
+           {
+           PLBOT.dom = doc.html();
            }
      
      
@@ -106,6 +113,10 @@ public class PLBOT {
       if(sect!=null)
       {
           flag=sect.contains("About 0 results")?true:false;
+          if(!flag)
+          PLBOT.dom = doc.html();
+          else
+          PLBOT.dom = "";
           
       }
       else
@@ -129,7 +140,19 @@ public class PLBOT {
     } 
     
    
-    
+    public static List<String> getSources()      
+    {
+        //System.out.println(PLBOT.dom+" |||");
+        Elements el= Jsoup.parse(PLBOT.dom).getElementsByClass("yuRUbf");
+        List<String> array = new ArrayList<>();
+         for(Element e: el){
+          
+         Document c = Jsoup.parse(e.html());
+         c.getElementsByTag("a");
+         array.add(e.getElementsByTag("a").attr("href"));
+      }
+    return array;
+    }
     
     
 }

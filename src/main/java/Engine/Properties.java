@@ -13,11 +13,14 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+
 /**
  *
  * @author joey
  */
 public class Properties {
+    public static String dom="";
     public static List<String> source_mapping;
     public static volatile boolean isReady = false;
     public static volatile List<String> names= null;

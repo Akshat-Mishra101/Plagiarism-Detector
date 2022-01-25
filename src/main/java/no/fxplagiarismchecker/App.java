@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import javafx.scene.image.Image;
 
 /**
  * JavaFX App
@@ -26,7 +27,7 @@ public class App extends Application {
         this.stage.centerOnScreen();
         this.stage.setMinHeight(620);
         this.stage.setMinWidth(600);
-
+        App.stage.getIcons().add(new Image("Images/qis.png"));
         this.stage.show();
         
     

@@ -5,10 +5,12 @@
  */
 package no.fxplagiarismchecker;
 
+import Engine.PLBOT;
 import Engine.Properties;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -19,6 +21,8 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
@@ -77,6 +81,29 @@ public class Starter {
             Logger.getLogger(Starter.class.getName()).log(Level.SEVERE, null, ex);
         }
         * **/
-        App.main(args);
+       App.main(args);
+      
+      
+      //yuRUbf class
+      /**
+      Elements el = Jsoup.parse(new File("C:\\Users\\joey\\Downloads\\'Yes, speed matters. But we can’t focus too much on speed—otherwise there’s no time for reflection, and reflection is critical for learning.' - Google Search.html"), "UTF-8").getElementsByClass("yuRUbf");
+      for(Element e: el){
+          
+         Document c = Jsoup.parse(e.html());
+         c.getElementsByTag("a");
+          System.out.println(e.getElementsByTag("a").attr("href")+"\r\n___________________________________\r\n");
+      }
+      * 
+      *  
+      Properties.loadFiles();
+      boolean result = PLBOT.search("By 1828, Sequoyah was at the peak of his renown. His syllabary had been accepted by the Cherokee National Council at its national capital in New Echota, Georgia, in 1825.", 25000);
+      System.out.println(result);
+      List<String> arr = PLBOT.getSources();
+      for(String a: arr)
+          System.out.println(a);
+       */
+      
+      
+      
     }
 }

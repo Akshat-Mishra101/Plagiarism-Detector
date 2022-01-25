@@ -120,7 +120,7 @@ public class DataProcessor extends Task<Void> {
                   StringTokenizer st=new StringTokenizer(sc.nextLine(),".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
-                      String token=st.nextToken();
+                  String token=st.nextToken();
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
                   
@@ -253,13 +253,13 @@ public class DataProcessor extends Task<Void> {
           System.out.print(filename+":");
         for(String str:strings)
         {
-             System.out.print(str+",");
+            
              try{
             
             if(str.substring(str.lastIndexOf("|")+1).equals(filename))
             {
             
-            resultant[1][counter] += str.substring(0,str.lastIndexOf("|"))+",";
+            resultant[1][counter] += str.substring(0,str.lastIndexOf("|"))+"::";
             }
              }
              catch(Exception e){
@@ -284,7 +284,7 @@ public class DataProcessor extends Task<Void> {
        
         
        
-        updateProgress(10,100);
+        updateProgress(25,100);
         
         
         
@@ -330,20 +330,26 @@ public class DataProcessor extends Task<Void> {
         
         fd3.setToValue(1);
          fd2.setOnFinished(event->{
-           
+           updateProgress(75,100);
         fd3.play();
         });
        
          fd3.setOnFinished(event->{
+             updateProgress(100,100);
          //Create The Plagiarism Report
          Task<Void> report_creation = new Task(){
              @Override
              protected Object call() throws Exception {
                  Properties.isReady = false;
-                    updateMessage("Creating Report");                 
+                    updateMessage("Creating Report");       
+                      try{
                     System.out.println(ReportCreator.CreateReport());
-                    
+                  
                     updateMessage("Report Complete");
+                    }
+                    catch(Exception e){
+                    System.out.println(e+" EXCEPTION THROWN");
+                    }
                     Properties.isReady = true;
                  return null;
              }
@@ -357,7 +363,7 @@ public class DataProcessor extends Task<Void> {
          
          
          
-            System.out.println("Animations");
+          
         FadeTransition fd=new FadeTransition(Duration.millis(500));
         fd.setNode(websearch);
         
@@ -369,7 +375,7 @@ public class DataProcessor extends Task<Void> {
         
         fd.play();
         fd.setOnFinished(event->{
-            
+            updateProgress(50,100);
             Task<Void> T= new Task<>(){
                 @Override
                 protected Void call() throws Exception {
@@ -377,7 +383,7 @@ public class DataProcessor extends Task<Void> {
                     int row=0;
             for(String filename:resultant[0])
             {
-            double progress=(double)((row+1)/resultant[0].length)*100;
+            double progress=(double)((double)(row+1)/(double)resultant[0].length)*(double)100.0;
             System.out.println(progress+"%");
            updateProgress(progress,100);
             
@@ -394,7 +400,7 @@ public class DataProcessor extends Task<Void> {
               
             
                List<String> list = new ArrayList<>();
-               String results[] = resultset.split(",");
+               String results[] = resultset.split("::");
                
                for(String individual:results)
                {
@@ -419,9 +425,18 @@ public class DataProcessor extends Task<Void> {
                    //perform a plag check
                   
                   boolean result = PLBOT.search(individual_strings, 250000);
-                  String formulated = individual_strings+"|"+result;
+                  List<String> sources = PLBOT.getSources();
+                  String sorcerrer = "";
+                  for(String source:sources){
+                      sorcerrer = source;
+                      break;
                   
-                 processed += formulated + ",";
+                  }
+                 
+                      
+                  String formulated = individual_strings+"->"+sorcerrer+"|"+result;
+                  
+                 processed += formulated + "::";
                   
                   
                   count++;
@@ -438,9 +453,16 @@ public class DataProcessor extends Task<Void> {
                else{ //full plag check
                    
                     boolean result = PLBOT.search(individual_strings, 250000);
-                  String formulated = individual_strings+"|"+result;
+                    List<String> sources = PLBOT.getSources();
+                    String sorcerrer = "";
+                  for(String source:sources){
+                      sorcerrer = source;
+                      break;
                   
-                  processed += formulated + ",";
+                  }
+                  String formulated = individual_strings+"->"+sorcerrer+"|"+result;
+                  
+                  processed += formulated + "::";
                   
                   
                  
@@ -525,13 +547,37 @@ public class DataProcessor extends Task<Void> {
         
         fd3.setToValue(1);
         
+        
+        fd3.setOnFinished(event ->{
+        Task<Void> terrible =new Task<>(){
+            @Override
+            protected Void call() throws Exception {
+                updateMessage("Creating Report");
+                Properties.isReady = false;
+                ReportCreator.CreateReport();
+                Properties.isReady = true;
+                updateMessage("Report Created");
+                
+                return null;
+            }
+        };
+        
+        
+        Thread creator = new Thread(terrible);
+        creator.setDaemon(true);
+        creator.start();
+        });
+        
+        
+        
+        
         fd.setOnFinished(event->{
         
         fd2.play();
         });
         
         //a source map contains a lot of information
-        //sentence[file1]<->sentence[file2]<->....sentence[fileN] = source_url
+        //sentence[file1]<->sentence[file2]<->....sentence[fileN] -> source_url
         Properties.source_mapping = new ArrayList<>();
         fd2.setOnFinished(event->{
             //traverse through the other documents to search for plag
@@ -543,14 +589,14 @@ public class DataProcessor extends Task<Void> {
                        String file = resultant[0][0];
                       
                        
-                       String sentences[] = resultant[1][0].split(",");
+                       String sentences[] = resultant[1][0].split("::");
                        
                        //finds all interplagiarised sentences
                        //we start from the second element
                        for(int i=1;i<resultant[0].length;i++)
                        {
                           
-                         String comparative_sentences[] = resultant[1][i].split(",");  
+                         String comparative_sentences[] = resultant[1][i].split("::");  
                          
                          for(String sentence:sentences)
                          {
@@ -590,7 +636,8 @@ public class DataProcessor extends Task<Void> {
                 fd.play();
 
         }
-        else{
+        else
+        {
         FadeTransition fd=new FadeTransition(Duration.millis(200));
         fd.setNode(websearch);
         
@@ -617,23 +664,241 @@ public class DataProcessor extends Task<Void> {
         fd3.setToValue(1);
         
         fd.setOnFinished(event->{
-        
+           
+            Task<Void> T= new Task<>(){
+                @Override
+                protected Void call() throws Exception {
+                   //check for common points
+                   
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                //here we check for plagairism 
+                    int row=0;
+            for(String filename:resultant[0])
+            {
+            double progress=(double)((row+1)/resultant[0].length)*100;
+            System.out.println(progress+"%");
+           updateProgress(progress,100);
+            
+           System.out.println(filename+" : "+resultant[1][row]);
+          
+           
+           String resultset = resultant[1][row];
+           if(resultset.trim().length() <= 2)
+           {
+              //insufficient data
+              //updateMessage();
+           }
+           else{
+              
+            
+               List<String> list = new ArrayList<>();
+               String results[] = resultset.split(",");
+               
+               for(String individual:results)
+               {
+                  list.add(individual);
+                  
+                  
+               }
+               
+               
+               Collections.sort(list);
+               
+               
+               int count = 0;
+               String processed = "";
+             for(String individual_strings:list)
+             {
+                
+               if(Properties.getValue("plagcheck").equals("Partial")) {       
+               if(individual_strings.length()>3)
+               {
+                 
+                   //perform a plag check
+                  
+                  boolean result = PLBOT.search(individual_strings, 250000);
+                   List<String> sources = PLBOT.getSources();
+                  String sorcerrer = "";
+                  for(String source:sources){
+                      sorcerrer = source;
+                      break;
+                  
+                  }
+                 
+                      
+                  String formulated = individual_strings+"->"+sorcerrer+"|"+result;
+                  
+                 processed += formulated + "::";
+                  
+                  
+                  count++;
+                  if(count == 3)
+                  {
+                  break;
+                  }
+               
+               }
+               else
+               System.out.println(individual_strings+" Omitted Because The String Is Too Small");
+               }
+               
+               else{ //full plag check
+                   
+                    boolean result = PLBOT.search(individual_strings, 250000);
+                  List<String> sources = PLBOT.getSources();
+                  String sorcerrer = "";
+                  for(String source:sources){
+                      sorcerrer = source;
+                      break;
+                  
+                  }
+                 
+                      
+                  String formulated = individual_strings+"->"+sorcerrer+"|"+result;
+                  
+                 processed += formulated + "::";
+                  
+                  
+                 
+               
+               }
+               
+              }
+              resultant[1][row] = processed; 
+               
+           }
+           
+               
+               
+           
+           row++;
+           }
+           
+                updateMessage("Web Search Complete");
+                Properties.plagpercentage=resultant;
+                
+               
+                for(int i=0;i<Properties.plagpercentage[0].length;i++)
+                {
+                    System.out.println(Properties.plagpercentage[0][i]+" : "+Properties.plagpercentage[1][i]);
+                }
+                
+                
+                
+                
+                
+                
+                
+                    return null;
+                }
+            };
+            msp.progressProperty().bind(T.progressProperty());
+            Thread rtx=new Thread(T);
+            rtx.start();
+           
         fd2.play();
         });
         
         
         
         fd2.setOnFinished(event->{
+            
+            Task<Void> source_mapping = new Task<>(){
+                @Override
+                protected Void call() throws Exception {
+                  //create source maps;
+                  
+                  
+                  if(resultant[0].length > 1)
+                    {
+                       String file = resultant[0][0];
+                      
+                       
+                       String sentences[] = resultant[1][0].split("::");
+                       
+                       
+                       //finds all interplagiarised sentences
+                       //we start from the second element
+                       for(int i=1;i<resultant[0].length;i++)
+                       {
+                          
+                         String comparative_sentences[] = resultant[1][i].split("::");  
+                         
+                         for(String sentence:sentences)
+                         {
+                             String leftportion = sentence.substring(0,sentence.lastIndexOf("->"));
+                             
+                             String rightportion = sentence.substring(sentence.lastIndexOf("->"));
+                             
+                             for(String compared_sentence:comparative_sentences)
+                             {
+                                     String left_com = compared_sentence.substring(0,compared_sentence.lastIndexOf("->"));
+                                     String right_com = compared_sentence.substring(compared_sentence.lastIndexOf("->"));
+                                     if(leftportion.equals(left_com))
+                                     {
+                                         Properties.source_mapping.add(left_com+"["+file+"]<=>"+left_com+"["+resultant[0][i]+"]"+rightportion);
+                                     }
+                             }
+                               
+                         }
+                       
+                       }
+                       System.out.println("____________________________");
+                       Properties.source_mapping.forEach(str->{
+                       System.out.println(str);
+                       });
+                    
+                    }
+                    else{
+                    System.out.println("You Must Select Multiple Documents To Conduct The Search");
+                    }
+                  
+                  return null;
+                }
+            };
+            Thread mapper = new Thread(source_mapping);
+            mapper.setDaemon(true);
+            mapper.start();
         fd3.play();
         });
         
         
-        fd3.setOnFinished(event->{});
+        fd3.setOnFinished(event->{
         
+                 Task<Void> terra = new Task<>(){
+                 @Override
+                 protected Void call() throws Exception {
+                      Properties.isReady = false;
+                      try{
+                      ReportCreator.CreateReport();
+                      }
+                      catch(Exception e){
+                      System.out.println(e);
+                      }
+                      Properties.isReady = true;
+                      System.out.println("Is READY");
+                      return null;
+                }
+                 
+                 };
+                 Thread rtx = new Thread(terra);
+                 rtx.start();
+                 });
         
         
                 fd.play();
 
+        
+        
+        
         
         }
         
@@ -660,3 +925,5 @@ public class DataProcessor extends Task<Void> {
         
     }
 }
+    
+   

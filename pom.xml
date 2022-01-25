@@ -28,6 +28,13 @@
     <artifactId>materialfx</artifactId>
     <version>11.11.1</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx -->
+<dependency>
+    <groupId>org.fxmisc.richtext</groupId>
+    <artifactId>richtextfx</artifactId>
+    <version>0.10.7</version>
+</dependency>
+
         <dependency>
   		<groupId>net.sourceforge.tess4j</groupId>
   		<artifactId>tess4j</artifactId>
@@ -106,6 +113,28 @@
                     </execution>
                 </executions>
             </plugin>
+             <plugin>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>no.fxplagiarismchecker.Starter</mainClass>
+                            </transformer>
+                            
+                        </transformers>
+                        
+                        
+                    </configuration>
+                </execution> 
+            </executions>
+            
+        </plugin>
         </plugins>
     </build>
 </project>

@@ -29,15 +29,21 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -45,6 +51,9 @@ import javafx.util.Duration;
  * @author joey
  */
 public class MainPageController implements Initializable{
+    
+    @FXML
+    Button Report_btn;
     @FXML
     Button savec;
     @FXML
@@ -134,6 +143,28 @@ public class MainPageController implements Initializable{
     
     String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};
     @FXML
+    public void animate_report()
+    {
+      RotateTransition rt = new RotateTransition(Duration.millis(200));
+      rt.setNode(Report_btn);
+      rt.setFromAngle(0);
+      rt.setToAngle(45);
+
+      rt.play();
+      System.out.println("here");
+    }
+     @FXML
+    public void animate_report2()
+    {
+      RotateTransition rt = new RotateTransition(Duration.millis(200));
+      rt.setNode(Report_btn);
+      rt.setFromAngle(45);
+      rt.setToAngle(0);
+
+      rt.play();
+      System.out.println("here");
+    }
+    @FXML
     public void reportCreation(Event e) throws IOException{
         
         if(Properties.isReady)
@@ -149,6 +180,9 @@ public class MainPageController implements Initializable{
         
         }
         
+        }
+        else{
+        System.out.println("Not Ready");
         }
     }
     @FXML
@@ -280,22 +314,65 @@ public class MainPageController implements Initializable{
         ParallelTransition pt=new ParallelTransition(fd,fca);
         pt.play();
         
+        
+        
+        pt.setOnFinished(event->{
+       base();
+        });
         try{
        rtx.stop();
         }
         catch(Exception e){}
     }
+    
+    
+    public void base()
+    {
+     websearch.setOpacity(0);
+        documentalsearch.setOpacity(0);
+        reportcreation.setOpacity(0);
+        mpb.progressProperty().unbind();
+        msp.progressProperty().unbind();
+        bsp.progressProperty().unbind();
+        csp.progressProperty().unbind();
+        mpb.setProgress(0);
+        msp.setProgress(0);
+        bsp.setProgress(0);
+        csp.setProgress(0);
+    
+    }
     @FXML
      AnchorPane wind;
+    @FXML
+    public void PreviewReport() throws IOException{
+     FXMLLoader fxmlloader=new FXMLLoader(getClass().getResource("Detailed Analysis Form.fxml"));
+    Parent root1=(Parent)fxmlloader.load();
     
+        Stage customfilter = new Stage();
+    customfilter.setTitle("Custom Filters");
+    customfilter.setScene(new Scene(root1));
+
+   customfilter.show(); 
     
+    customfilter.getIcons().add(new Image("Images/qis.png"));
+    System.out.print("here");
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-      buttonhoverpane.setOpacity(0);
+     Report_btn.setTooltip(new Tooltip("Preview A Report"));
+     settings_btn.setTooltip(new Tooltip("Settings"));
 //      timeout.setStyle("-fx-background-color: -fx-control-inner-background;");
     //  settings_pane.setOpacity(0);
-      t1.setOpacity(0);
+     
+       load();
+      
+      
+    
+    }
+    public void load()
+    { buttonhoverpane.setOpacity(0);
+         t1.setOpacity(0);
       t2.setOpacity(0);
       t3.setOpacity(0);
       notif.setOpacity(0);
@@ -304,13 +381,6 @@ public class MainPageController implements Initializable{
       documentalsearch.setOpacity(0);
        reportcreation.setOpacity(0);
       Properties.loadFiles();
-       load();
-      
-      
-    
-    }
-    public void load()
-    {
     
        google.setSelected(false);
        bing.setSelected(false);
