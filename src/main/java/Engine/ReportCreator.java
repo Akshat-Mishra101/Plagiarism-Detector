@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,44 +18,54 @@ import java.util.List;
  * @author joey
  */
 public class ReportCreator {
+    
+    static String text_preAddition = "";
+    
 
     
     public static String CreateReport() throws IOException
-    {
+    {   text_preAddition = "";
+        int place = 0;
+        for(String filename:Properties.plagpercentage[0])
+        {
         
+          text_preAddition += "filename:"+filename+"\r\n"+Properties.documents[place]+"<-->\r\n";
         
-        FileWriter fw=new FileWriter(new File("C:\\Users\\joey\\Desktop\\Dom.txt"));
-        fw.write(Properties.dom);
-        fw.close();
+          place++;
+          
+        }
+        
+      
         /**
          * Report Style
          * 
          */
+        
         if(Properties.type == ReportType.WEB){
         if(Properties.reportName==null)
         {
-        
            //search through the documents
             Properties.reportName = "Report_"+Instant.now();
         }
         String reportTitle = Properties.reportName;
         String Type = Properties.plagpercentage[0].length>1?"Multi-Document, ":"Single Document, ";
         String mode = (Properties.type==ReportType.WEB)?"WebSearch ":(Properties.type==ReportType.INTERDOC)?"Interdocument Search ":"Complete Search ";
-        String listheaders="doc_name,plagiarism_percentage,plagmap_source,similar_docs,total_words_plagiarised";
+        String listheaders="doc_name,plagiarism_percentage,plagmap_source,total_words";
         
-        String report="Title:"+reportTitle+"\r\n"+"Report Info:"+Type+mode+"\r\n"+listheaders;
+        String report=text_preAddition+"Title:"+reportTitle+"\r\n"+"Report Info:"+Type+mode+"\r\n"+listheaders;
         String list="";
         int position=0;
         for(String filename:Properties.plagpercentage[0])
         {
-         list+=filename+",";
+         list+=filename+Properties.global_delimeter;
          String sentences[]=Properties.plagpercentage[1][position].split("::");
+         Arrays.stream(sentences).forEach(item->System.out.print(item+"|"));
          
          int wordcount = 0; //per sentence
          String textaddition="(";
          for(String sen:sentences)
          {
-             
+             try{
            
              String text = sen.substring(0,sen.lastIndexOf("|"));
              String result = sen.substring(sen.lastIndexOf("|")+1);
@@ -70,6 +81,12 @@ public class ReportCreator {
               
               
             }
+             }
+             catch(Exception e)
+             {
+             
+             System.out.println(sen+" is the reason inside report "+e);
+             }
           
              
             
@@ -79,7 +96,8 @@ public class ReportCreator {
           textaddition+=")";
          double plagpercentage =(double)((double)wordcount/(double)Properties.total_words_per_file[position])*100.0d;
          plagpercentage = plagpercentage > 100? 100:plagpercentage; 
-         list+=plagpercentage+","+textaddition+",similar-docs,"+Properties.total_words_per_file[position];
+         
+         list+=plagpercentage+Properties.global_delimeter+textaddition+Properties.global_delimeter+Properties.total_words_per_file[position];
          
          list+="\r\n";
          position++;
@@ -106,9 +124,9 @@ public class ReportCreator {
            String reportTitle = Properties.reportName;
            String Type = Properties.plagpercentage[0].length>1?"Multi-Document, ":"Single Document, ";
            String mode = (Properties.type==ReportType.WEB)?"WebSearch ":(Properties.type==ReportType.INTERDOC)?"Interdocument Search ":"Complete Search ";
-           String listheaders="doc_name,plagiarism_percentage,plagmap_source,similar_docs,total_words_plagiarised";
+           String listheaders="doc_name,plagiarism_percentage,plagmap_source,total_words";
         
-           String report="Title:"+reportTitle+"\r\n"+"Report Info:"+Type+mode+"\r\n"+listheaders;
+           String report=text_preAddition+"Title:"+reportTitle+"\r\n"+"Report Info:"+Type+mode+"\r\n"+listheaders;
            
            List<String> bank  = new ArrayList<>();
            
@@ -117,7 +135,7 @@ public class ReportCreator {
            for(String filename:Properties.plagpercentage[0])
            {
            int word_count = 0;    
-           list+=filename+",";
+           list+=filename+Properties.global_delimeter;
            
            String collected = "(";
            for(String map:Properties.source_mapping)
@@ -149,7 +167,7 @@ public class ReportCreator {
            double plagpercentage =(double)((double)word_count/(double)Properties.total_words_per_file[position])*100.0d;
            System.out.println(Properties.total_words_per_file[position]);
            plagpercentage = plagpercentage > 100? 100:plagpercentage; 
-            list+=plagpercentage+","+collected+",similar-docs,"+Properties.total_words_per_file[position]+"\r\n";
+            list+=plagpercentage+Properties.global_delimeter+collected+Properties.global_delimeter+Properties.total_words_per_file[position]+"\r\n";
            position++;
            }
            
@@ -173,9 +191,9 @@ public class ReportCreator {
            String reportTitle = Properties.reportName;
            String Type = Properties.plagpercentage[0].length>1?"Multi-Document, ":"Single Document, ";
            String mode = (Properties.type==ReportType.WEB)?"WebSearch ":(Properties.type==ReportType.INTERDOC)?"Interdocument Search ":"Complete Search ";
-           String listheaders="doc_name,plagiarism_percentage,plagmap_source,similar_docs,total_words_plagiarised";
+           String listheaders="doc_name,plagiarism_percentage,plagmap_source,total_words";
         
-           String report="Title:"+reportTitle+"\r\n"+"Report Info:"+Type+mode+"\r\n"+listheaders;
+           String report=text_preAddition+"Title:"+reportTitle+"\r\n"+"Report Info:"+Type+mode+"\r\n"+listheaders;
            
            List<String> bank  = new ArrayList<>();
            
@@ -184,7 +202,7 @@ public class ReportCreator {
            for(String filename:Properties.plagpercentage[0])
            {
            int word_count = 0;    
-           list+=filename+",";
+           list+=filename+Properties.global_delimeter;
            
            String collected = "(";
            for(String map:Properties.source_mapping)
@@ -192,11 +210,12 @@ public class ReportCreator {
                
               if(map.contains(filename))
               {
-                 
-                 map = map.substring(0,map.lastIndexOf("->"));
+                 try{
+                 String left = map.substring(0,map.lastIndexOf("->"));
                  String source = map.substring(map.lastIndexOf("->"));
-                 collected += map+source+"::";
-                 String splitter[] = map.split("<=>");
+                 collected += left+source+"::";
+                 String splitter[] = map.substring(0, map.lastIndexOf("->")).split("<=>");
+                 
                  for(String split:splitter)
                  {
                  split = split.substring(0, split.lastIndexOf("["));
@@ -205,6 +224,10 @@ public class ReportCreator {
                   word_count += split.split(" ").length;
                   bank.add(split);
                  
+                 }
+                 }
+                 catch(Exception d){
+                 System.out.println(d+" REPORTER REPORTEF");
                  }
               }
               
@@ -218,7 +241,7 @@ public class ReportCreator {
            double plagpercentage =(double)((double)word_count/(double)Properties.total_words_per_file[position])*100.0d;
            System.out.println(Properties.total_words_per_file[position]);
            plagpercentage = plagpercentage > 100? 100:plagpercentage; 
-            list+=plagpercentage+","+collected+",similar-docs,"+Properties.total_words_per_file[position]+"\r\n";
+            list+=plagpercentage+Properties.global_delimeter+collected+Properties.global_delimeter+Properties.total_words_per_file[position]+"\r\n";
            position++;
            }
            

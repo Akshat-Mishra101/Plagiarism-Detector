@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.List;
 import static java.util.Locale.filter;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
 import javafx.animation.Interpolator;
@@ -51,7 +52,7 @@ import javafx.util.Duration;
  * @author joey
  */
 public class MainPageController implements Initializable{
-    
+    //The UI Components
     @FXML
     Button Report_btn;
     @FXML
@@ -98,10 +99,10 @@ public class MainPageController implements Initializable{
     MFXProgressBar mpb;
     @FXML
      AnchorPane notif;
-    //here
+    
     DataProcessor dp;
     Thread rtx;
-    //here
+
     @FXML
     Text t1;
     @FXML
@@ -166,6 +167,7 @@ public class MainPageController implements Initializable{
     }
     @FXML
     public void reportCreation(Event e) throws IOException{
+        
         
         if(Properties.isReady)
         {
@@ -254,7 +256,7 @@ public class MainPageController implements Initializable{
      
     String result= e.getSource().toString();
     //FadeTransition ft = new FadeTransition(Duration.millis(500));
-     ScaleTransition tt=new ScaleTransition(Duration.millis(100));
+    ScaleTransition tt=new ScaleTransition(Duration.millis(100));
     
     tt.setToX(1);
     tt.setToY(1);
@@ -293,6 +295,10 @@ public class MainPageController implements Initializable{
     @FXML
     public void close_process()
     {
+        
+         
+         
+         
         FadeTransition fd= new FadeTransition();
         fd.setNode(mpb);
         fd.setFromValue(1);
@@ -317,7 +323,10 @@ public class MainPageController implements Initializable{
         
         
         pt.setOnFinished(event->{
+            
        base();
+       notif.setManaged(false);
+       notif.setVisible(false);
         });
         try{
        rtx.stop();
@@ -328,7 +337,7 @@ public class MainPageController implements Initializable{
     
     public void base()
     {
-     websearch.setOpacity(0);
+        websearch.setOpacity(0);
         documentalsearch.setOpacity(0);
         reportcreation.setOpacity(0);
         mpb.progressProperty().unbind();
@@ -341,25 +350,47 @@ public class MainPageController implements Initializable{
         csp.setProgress(0);
     
     }
-    @FXML
-     AnchorPane wind;
+    
     @FXML
     public void PreviewReport() throws IOException{
+     
+    
+        if(Properties.plagReport==null || (Properties.plagReport.trim().length() <= 0))
+        {
+         Properties.plagReport = "";
+         File report_file = new FileChooser().showOpenDialog(bt1.getScene().getWindow());
+         if(report_file!=null){
+         Scanner reader =  new Scanner(report_file);
+         Properties.plagReport = "";
+         while(reader.hasNext())
+         {
+              Properties.plagReport +=reader.nextLine()+"\n";
+         }
+         }
+         
+       }
+       
+        
+        if(Properties.plagReport.length()>0){
+        
      FXMLLoader fxmlloader=new FXMLLoader(getClass().getResource("Detailed Analysis Form.fxml"));
     Parent root1=(Parent)fxmlloader.load();
-    
-        Stage customfilter = new Stage();
-    customfilter.setTitle("Custom Filters");
-    customfilter.setScene(new Scene(root1));
+    Stage report_stage = new Stage();
+    report_stage.setTitle("Plagiarism Report");
+    report_stage.setScene(new Scene(root1));
 
-   customfilter.show(); 
-    
-    customfilter.getIcons().add(new Image("Images/qis.png"));
-    System.out.print("here");
+    report_stage.show(); 
+    report_stage.getIcons().add(new Image("Images/qis.png"));
+  
+        }
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+     
+      
+      
      Report_btn.setTooltip(new Tooltip("Preview A Report"));
      settings_btn.setTooltip(new Tooltip("Settings"));
 //      timeout.setStyle("-fx-background-color: -fx-control-inner-background;");
@@ -371,8 +402,14 @@ public class MainPageController implements Initializable{
     
     }
     public void load()
-    { buttonhoverpane.setOpacity(0);
-         t1.setOpacity(0);
+    { 
+        
+         notif.setManaged(false);
+      notif.setVisible(false);
+      buttonhoverpane.setOpacity(0);
+      
+      
+      t1.setOpacity(0);
       t2.setOpacity(0);
       t3.setOpacity(0);
       notif.setOpacity(0);
@@ -504,27 +541,9 @@ public class MainPageController implements Initializable{
     @FXML
     public void clicked_menu(Event e)
     {   
-      App.stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-    float width = (float) App.stage.getWidth();
-    
-    if(width<1120)
-    {
-       
-      
-    notif.setManaged(false);
-      notif.setVisible(false);
-      
-    }
-    else{
-        
-             
-
-        notif.setManaged(true);
+         notif.setManaged(true);
          notif.setVisible(true);
-
-    }
-});
-      
+         
     FileChooser fc=new FileChooser();
     fc.setTitle("Select The Documents");
     

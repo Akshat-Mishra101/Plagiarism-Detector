@@ -83,7 +83,6 @@ public class Starter {
         * **/
        App.main(args);
       
-      
       //yuRUbf class
       /**
       Elements el = Jsoup.parse(new File("C:\\Users\\joey\\Downloads\\'Yes, speed matters. But we can’t focus too much on speed—otherwise there’s no time for reflection, and reflection is critical for learning.' - Google Search.html"), "UTF-8").getElementsByClass("yuRUbf");

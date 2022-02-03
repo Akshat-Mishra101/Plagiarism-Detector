@@ -44,6 +44,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 public class DataProcessor extends Task<Void> {
     
     
+    
+    
     List<File> filepaths;
     String type_of_operation;
     AnchorPane websearch;
@@ -54,8 +56,13 @@ public class DataProcessor extends Task<Void> {
     MFXProgressSpinner msp;
     MFXProgressSpinner bsp;
     MFXProgressSpinner csp;
+    
+    
+    
     public DataProcessor(List<File> filepaths,String type_of_operation,AnchorPane websearch,AnchorPane documentalsearch,AnchorPane reportcreation,MFXProgressSpinner msp,MFXProgressSpinner bsp,MFXProgressSpinner csp)
     {
+        
+        
         this.filepaths=filepaths;
         this.type_of_operation = type_of_operation;
         
@@ -75,7 +82,9 @@ public class DataProcessor extends Task<Void> {
         
         
         Properties.plagpercentage = new String[2][filepaths.size()];
+        Properties.documents = new String[filepaths.size()];
         Properties.total_words_per_file = new int[filepaths.size()];
+       
         System.out.println(filepaths.size());
         System.out.println(Properties.plagpercentage.length);
         
@@ -86,6 +95,7 @@ public class DataProcessor extends Task<Void> {
             System.out.println("Counter "+count);
         Properties.plagpercentage[0][count] = file.getName();
         Properties.plagpercentage[1][count] = "";
+        Properties.documents[count] = "";
         Properties.total_words_per_file[count] = 0;
         count++;
        
@@ -103,39 +113,44 @@ public class DataProcessor extends Task<Void> {
     {
         
         List<String> strings=new ArrayList();//stores the text along with the filenames
-        
+       
         
         filepaths.forEach(file -> {
+            
+             try{
+            
+            
             int totalwords = 0;
            updateMessage("Reading File");
            updateProgress(-1,100);
             if(file.getName().contains(".txt")){
-            try {
+          
                 updateMessage("Loading Files");
                 Scanner sc=new Scanner(file);
                 
                 while(sc.hasNext())
                 {
                     updateMessage("Extracting Text");
-                  StringTokenizer st=new StringTokenizer(sc.nextLine(),".!?");
+                    String line = sc.nextLine();
+                  Properties.documents[Properties.counter] += line+"\r\n";
+                  StringTokenizer st=new StringTokenizer(line,".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   String token=st.nextToken();
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
                   
+                  
                   }
                 }
                 
                  
-            } catch (FileNotFoundException ex) {
-              System.out.println("File Not Found");
-            }
+           
             
         }
         else if(file.getName().contains(".pdf"))
         {
-               try {
+             
                    PDDocument document = PDDocument.load(file);
                    PDFRenderer pdfRenderer = new PDFRenderer(document);
                    
@@ -162,8 +177,12 @@ public class DataProcessor extends Task<Void> {
                    Scanner sd=new Scanner(result);
                 while(sd.hasNext())
                 {
+                    
+                     String line = sd.nextLine();
+                  Properties.documents[Properties.counter] += line+"\r\n";
+                    
                 updateMessage("Extracting Text");
-                StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
+                StringTokenizer st=new StringTokenizer(line,".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   String token=st.nextToken();
@@ -177,14 +196,12 @@ public class DataProcessor extends Task<Void> {
                 
                   }  
                    
-                   //apache pdfbox to parse
-               } catch (Exception ex) {
-                   Logger.getLogger(DataProcessor.class.getName()).log(Level.SEVERE, null, ex);
-               }
+                  
+               
         }
         else if(file.getName().contains(".docx"))
         { // apache poi
-               try {
+       
                    XWPFDocument doc = new XWPFDocument(new FileInputStream(file));
                    
                   
@@ -193,6 +210,10 @@ public class DataProcessor extends Task<Void> {
                 
                 //from these paragraphs we extract the text
                // System.out.println(paragraph.getText()+"\n___________________________________\n");
+               
+                  Properties.documents[Properties.counter] += paragraph.getText()+"\r\n";
+               
+               
                 
                 StringTokenizer sd = new StringTokenizer(paragraph.getText(),".!?");
                 while(sd.hasMoreElements())
@@ -205,20 +226,21 @@ public class DataProcessor extends Task<Void> {
             }
                
                  
-               } catch (Exception ex) {
-                   Logger.getLogger(DataProcessor.class.getName()).log(Level.SEVERE, null, ex);
-               }
+              
         }
         else if(file.getName().contains(".html"))
         {
-               try {
+            
                    // jsoup to parse
                    String entire_text = Jsoup.parse(file, "UTF-8").text();
                    Scanner sd=new Scanner(entire_text);
                 while(sd.hasNext())
                 {
+                  String line = sd.nextLine();
+                  Properties.documents[Properties.counter] += line+"\r\n";
+                    
                 updateMessage("Extracting Text");
-                StringTokenizer st=new StringTokenizer(sd.nextLine(),".!?");
+                StringTokenizer st=new StringTokenizer(line,".!?");
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                    String token=st.nextToken();
@@ -230,41 +252,45 @@ public class DataProcessor extends Task<Void> {
                 }
                    
                    
-               } catch (Exception ex) {
-                   Logger.getLogger(DataProcessor.class.getName()).log(Level.SEVERE, null, ex);
-               }
+              
             
         }
             Properties.total_words_per_file[Properties.array_pos]=totalwords;
          Properties.array_pos++;    
-        }
-             
-           );
+         Properties.counter++;
+        } catch(Exception e){}
+        
+        
+        });
+        
+        
+        
         Properties.array_pos =0;
+        Properties.counter = 0;
         
-        
+        //
          updateMessage("Bifurcating Data");
         String resultant[][]=Properties.plagpercentage;
-        //
+       
         int counter= 0;
         System.out.println("HERE");
         for(String filename:resultant[0])
         {
           System.out.print(filename+":");
+          
+         
+          
         for(String str:strings)
         {
             
-             try{
+        
             
             if(str.substring(str.lastIndexOf("|")+1).equals(filename))
             {
             
             resultant[1][counter] += str.substring(0,str.lastIndexOf("|"))+"::";
             }
-             }
-             catch(Exception e){
-             System.out.println(e);
-             }
+            
             
             
            
@@ -377,10 +403,10 @@ public class DataProcessor extends Task<Void> {
         fd.setOnFinished(event->{
             updateProgress(50,100);
             Task<Void> T= new Task<>(){
-                @Override
-                protected Void call() throws Exception {
+            @Override
+            protected Void call() throws Exception {
                 //here we check for plagairism 
-                    int row=0;
+            int row=0;
             for(String filename:resultant[0])
             {
             double progress=(double)((double)(row+1)/(double)resultant[0].length)*(double)100.0;
@@ -482,6 +508,7 @@ public class DataProcessor extends Task<Void> {
            
                 updateMessage("Web Search Complete");
                 Properties.plagpercentage=resultant;
+                
                 
                
                 for(int i=0;i<Properties.plagpercentage[0].length;i++)
@@ -638,6 +665,7 @@ public class DataProcessor extends Task<Void> {
         }
         else
         {
+        Properties.source_mapping = new ArrayList<>();
         FadeTransition fd=new FadeTransition(Duration.millis(200));
         fd.setNode(websearch);
         
@@ -673,12 +701,6 @@ public class DataProcessor extends Task<Void> {
                     
                     
                     
-                    
-                    
-                    
-                    
-                    
-                    
                 //here we check for plagairism 
                     int row=0;
             for(String filename:resultant[0])
@@ -700,7 +722,7 @@ public class DataProcessor extends Task<Void> {
               
             
                List<String> list = new ArrayList<>();
-               String results[] = resultset.split(",");
+               String results[] = resultset.split("::");
                
                for(String individual:results)
                {
@@ -735,7 +757,7 @@ public class DataProcessor extends Task<Void> {
                  
                       
                   String formulated = individual_strings+"->"+sorcerrer+"|"+result;
-                  
+                 
                  processed += formulated + "::";
                   
                   
@@ -804,7 +826,9 @@ public class DataProcessor extends Task<Void> {
             Thread rtx=new Thread(T);
             rtx.start();
            
-        fd2.play();
+          T.setOnSucceeded(eh->{
+          fd2.play();
+          });
         });
         
         
@@ -816,15 +840,15 @@ public class DataProcessor extends Task<Void> {
                 protected Void call() throws Exception {
                   //create source maps;
                   
-                  
+                  try{
                   if(resultant[0].length > 1)
                     {
                        String file = resultant[0][0];
-                      
-                       
+                    
                        String sentences[] = resultant[1][0].split("::");
-                       
-                       
+                       System.out.println(sentences.length+" IS THE LENGTH");
+                       System.out.println(sentences[0]);
+                       System.out.println(sentences[1]);
                        //finds all interplagiarised sentences
                        //we start from the second element
                        for(int i=1;i<resultant[0].length;i++)
@@ -844,6 +868,7 @@ public class DataProcessor extends Task<Void> {
                                      String right_com = compared_sentence.substring(compared_sentence.lastIndexOf("->"));
                                      if(leftportion.equals(left_com))
                                      {
+                                         System.out.println(left_com+"["+file+"]<=>"+left_com+"["+resultant[0][i]+"]"+rightportion);
                                          Properties.source_mapping.add(left_com+"["+file+"]<=>"+left_com+"["+resultant[0][i]+"]"+rightportion);
                                      }
                              }
@@ -857,17 +882,27 @@ public class DataProcessor extends Task<Void> {
                        });
                     
                     }
+                  
+                 
                     else{
                     System.out.println("You Must Select Multiple Documents To Conduct The Search");
                     }
-                  
+                  }
+                   catch(Exception e){
+                   System.out.println(e+" IS THE EXCE");
+                   }
+                  System.out.println("Reached Here");
                   return null;
                 }
             };
             Thread mapper = new Thread(source_mapping);
             mapper.setDaemon(true);
             mapper.start();
-        fd3.play();
+            source_mapping.setOnSucceeded(eh->{
+                 fd3.play();
+            });
+            
+       
         });
         
         
@@ -881,7 +916,7 @@ public class DataProcessor extends Task<Void> {
                       ReportCreator.CreateReport();
                       }
                       catch(Exception e){
-                      System.out.println(e);
+                      System.out.println(e+" REPORT EXCEPTION");
                       }
                       Properties.isReady = true;
                       System.out.println("Is READY");

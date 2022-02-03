@@ -16,10 +16,14 @@ import java.util.logging.Logger;
 
 
 /**
- *
+ * This Class is Used To Manage The State Across The Application 
  * @author joey
  */
 public class Properties {
+    
+    public static String global_delimeter = "`"; // the delimeter used for seprating the values
+    public static int counter = 0;
+    public static String documents[] = null;
     public static String dom="";
     public static List<String> source_mapping;
     public static volatile boolean isReady = false;
@@ -31,7 +35,7 @@ public class Properties {
     public static String proxyAPI;
     public static String numberOfResults;
     public static String searchEngine;
-    
+    public static boolean isNew;
     
     public static String plagCheckType;
     
