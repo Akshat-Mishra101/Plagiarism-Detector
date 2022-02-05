@@ -8,7 +8,10 @@ package no.fxplagiarismchecker;
 import Engine.Properties;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -61,6 +64,7 @@ public class ReportCreator implements Initializable {
      stc.setParagraphGraphicFactory(LineNumberFactory.get(stc));
      
      setup();
+     
       
     }
     
@@ -68,7 +72,8 @@ public class ReportCreator implements Initializable {
     public void Next_Document(ActionEvent e)
     {
         System.out.println(e.getSource());
-        
+            stc.setStyle("-fx-background-radius: 10; -fx-background-color: #f7f7f7;");
+            stc.setStyleClass(0,5,"low");
             if(e.getSource().toString().contains("right"))
             {
                 current_position++;
@@ -76,37 +81,64 @@ public class ReportCreator implements Initializable {
                     current_position = 0;
                
                 
-                String document_name = new Scanner(documents[current_position]).nextLine();
+                String document_name = new Scanner(documents[current_position]).nextLine().trim();
            
                 String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
                         .filter(line -> !line.trim().equals(document_name.trim()))
-                        .collect(Collectors.joining());
+                        .collect(Collectors.joining()).trim();
                     
                 
                
                 
                 stc.replaceText(document);
                 current_document_name.setText(document_name);
+                String values[] = data[current_position].split("`");
+                plagiarism_percentage.setProgress(Double.parseDouble(values[1])/100.0);
+                hydrate(values[2]);
             }
             else{
                 current_position--;
                 if(current_position < 0)
                     current_position  = 0;
                 
-                String document_name = new Scanner(documents[current_position]).nextLine();
+                String document_name = new Scanner(documents[current_position]).nextLine().trim();
            
                 String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
                         .filter(line -> !line.trim().equals(document_name.trim()))
-                        .collect(Collectors.joining());
+                        .collect(Collectors.joining()).trim();
                 
                 stc.replaceText(document);
                 current_document_name.setText(document_name);
+                String values[] = data[current_position].split("`");
+                plagiarism_percentage.setProgress(Double.parseDouble(values[1])/100.0);
+                hydrate(values[2]);
             }
             System.out.println(data[current_position]);
         
         
     }
+    public void hydrate(String source_maps)
+    {
+     sources.getItems().clear();
+     source_maps = source_maps.substring(1,source_maps.length()-3);
+     
+     Arrays.stream(source_maps.split("::")).forEach(item -> sources.getItems().add(item.substring(item.indexOf(">")+1)));
+       
+     System.out.println(source_maps);
     
+    }
+    
+    @FXML
+    public void sentence_tracer(){
+        System.out.println("Traced");
+       
+        //stc.getStylesheets().add(getClass().getResource("styles/main.css").toExternalForm());
+        stc.setStyleClass(0,5,"high");
+        
+        stc.setStyle("-fx-background-radius: 10; -fx-background-color: #f7f7f7;");
+       
+    
+    }
     public void setup()
     {
         
@@ -118,8 +150,8 @@ public class ReportCreator implements Initializable {
                 String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
                         .filter(line -> !line.trim().equals(document_name.trim()))
                         .collect(Collectors.joining());
-                
-             stc.replaceText(document);
+             System.out.println(document_name+" is the document name");  
+             stc.replaceText(document.trim());
              current_document_name.setText(document_name);
             //loading an externally loaded document
             
@@ -184,12 +216,12 @@ public class ReportCreator implements Initializable {
                 
                 }
                 
-                documents[pointer] = buffer;
-                System.out.println("Document "+documents[pointer]+" END DOCUMENT||");
+                documents[pointer] = buffer.trim();
+                //System.out.println("Document "+documents[pointer]+" END DOCUMENT||");
                 
                 pointer++;
                // System.out.println("Broken at "+line);
-                System.out.println("Buffer is "+buffer+" ___buffer_end");
+               // System.out.println("Buffer is "+buffer+" ___buffer_end");
                 buffer = "";
             }
             
@@ -208,7 +240,8 @@ public class ReportCreator implements Initializable {
                         if(pointer2 == 0)
                         {
                             System.out.println(Double.parseDouble(plag_percentage)+" here");
-                            plagiarism_percentage.setProgress(Double.parseDouble(plag_percentage));
+                            plagiarism_percentage.setProgress(Double.parseDouble(plag_percentage)/100.0);
+                            hydrate(values[2].substring(1, values[2].length()-3));
 
                         }
                     data[pointer2] =  line;

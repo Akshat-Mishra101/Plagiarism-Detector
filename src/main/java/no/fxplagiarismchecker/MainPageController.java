@@ -166,26 +166,29 @@ public class MainPageController implements Initializable{
       System.out.println("here");
     }
     @FXML
+    public void saveReport() throws IOException{
+     if(Properties.plagReport.length()>0){
+        FileWriter fc = new FileWriter(new FileChooser().showSaveDialog(bt1.getScene().getWindow()).getAbsolutePath()+".txt");
+        fc.write(Properties.plagReport);
+        fc.close();
+     }
+    }
+    @FXML
     public void reportCreation(Event e) throws IOException{
+        if(Properties.plagReport.length()>0){
         
-        
-        if(Properties.isReady)
-        {
-        String report = Properties.plagReport;
-        FileChooser fc= new FileChooser();
-        File filer = fc.showSaveDialog(bt1.getScene().getWindow());
-        if(filer!=null)
-        {
-           FileWriter fw = new FileWriter(filer);
-           fw.write(report);
-           fw.close();
-        
+     FXMLLoader fxmlloader=new FXMLLoader(getClass().getResource("Preview.fxml"));
+    Parent root1=(Parent)fxmlloader.load();
+    Stage report_stage = new Stage();
+    report_stage.setTitle("Plagiarism Report");
+    report_stage.setScene(new Scene(root1));
+
+    report_stage.show(); 
+    report_stage.getIcons().add(new Image("Images/qis.png"));
+  
         }
         
-        }
-        else{
-        System.out.println("Not Ready");
-        }
+        
     }
     @FXML
     public void onClick(Event e)
@@ -223,27 +226,27 @@ public class MainPageController implements Initializable{
     
     ScaleTransition tt=new ScaleTransition(Duration.millis(100));
     
-    tt.setToX(1.01);
-    tt.setToY(1.01);
+    tt.setToX(1.05);
+    tt.setToY(1.05);
     
     
     
     if(result.contains("bt1"))
     {
-        bt1.setStyle("-fx-background-color:#fff");
+        bt1.setStyle(base_style+" -fx-background-color:#3d87ff; -fx-text-fill:#fff");
        tt.setNode(bt1);
     }
     else if(result.contains("bt2")){
-        bt2.setStyle("-fx-background-color:#fff");
+        bt2.setStyle(base_style+" -fx-background-color:#3d87ff; -fx-text-fill:#fff");
     tt.setNode(bt2);
     }
     else if(result.contains("Save Changes"))
     {
-       savec.setStyle("-fx-background-color:#fff");
+       savec.setStyle(base_style+" -fx-background-color:#3d87ff; -fx-text-fill:#fff");
        tt.setNode(savec);
     }
     else if(result.contains("Reset Defaults")){
-    resetd.setStyle("-fx-background-color:#fff");
+    resetd.setStyle(base_style+" -fx-background-color:#3d87ff; -fx-text-fill:#fff");
     tt.setNode(resetd);
     }
     tt.play();
@@ -265,20 +268,20 @@ public class MainPageController implements Initializable{
     
     if(result.contains("bt1"))
     {
-        bt1.setStyle("-fx-background-color:#f1f1f1");
+        bt1.setStyle(base_style);
        tt.setNode(bt1);
     }
     else if(result.contains("bt2")){
-        bt2.setStyle("-fx-background-color:#f1f1f1");
+        bt2.setStyle(base_style);
     tt.setNode(bt2);
     }
     else if(result.contains("Save Changes"))
     {
-       savec.setStyle("-fx-background-color:#f1f1f1");
+       savec.setStyle(base_style);
        tt.setNode(savec);
     }
     else if(result.contains("Reset Defaults")){
-    resetd.setStyle("-fx-background-color:#f1f1f1");
+    resetd.setStyle(base_style);
        tt.setNode(resetd);
     }
     
@@ -355,8 +358,7 @@ public class MainPageController implements Initializable{
     public void PreviewReport() throws IOException{
      
     
-        if(Properties.plagReport==null || (Properties.plagReport.trim().length() <= 0))
-        {
+       
          Properties.plagReport = "";
          File report_file = new FileChooser().showOpenDialog(bt1.getScene().getWindow());
          if(report_file!=null){
@@ -368,12 +370,12 @@ public class MainPageController implements Initializable{
          }
          }
          
-       }
+    
        
         
         if(Properties.plagReport.length()>0){
         
-     FXMLLoader fxmlloader=new FXMLLoader(getClass().getResource("Detailed Analysis Form.fxml"));
+     FXMLLoader fxmlloader=new FXMLLoader(getClass().getResource("Preview.fxml"));
     Parent root1=(Parent)fxmlloader.load();
     Stage report_stage = new Stage();
     report_stage.setTitle("Plagiarism Report");
@@ -384,11 +386,11 @@ public class MainPageController implements Initializable{
   
         }
     }
-    
+    String base_style;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-     
+     base_style = bt1.getStyle();
       
       
      Report_btn.setTooltip(new Tooltip("Preview A Report"));
@@ -404,7 +406,7 @@ public class MainPageController implements Initializable{
     public void load()
     { 
         
-         notif.setManaged(false);
+      notif.setManaged(false);
       notif.setVisible(false);
       buttonhoverpane.setOpacity(0);
       
@@ -543,6 +545,13 @@ public class MainPageController implements Initializable{
     {   
          notif.setManaged(true);
          notif.setVisible(true);
+         
+         
+         msp.setProgress(0);
+         bsp.setProgress(0);
+         csp.setProgress(0);
+         mpb.setProgress(0);
+         
          
     FileChooser fc=new FileChooser();
     fc.setTitle("Select The Documents");

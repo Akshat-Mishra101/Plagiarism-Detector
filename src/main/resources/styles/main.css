@@ -1,0 +1,7 @@
+.high{
+    -rtfx-background-color:#FF7F7F;
+    -fx-font-weight:700;    
+}
+.low{
+    -rtfx-background-color:unset
+}

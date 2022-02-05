@@ -337,28 +337,25 @@ public class DataProcessor extends Task<Void> {
         if(type_of_operation.equals("websearch"))
         {
             documentalsearch.setDisable(true);
-          
-            
-            
-            
             FadeTransition fd2=new FadeTransition(Duration.millis(500));
-        fd2.setNode(documentalsearch);
+            fd2.setNode(documentalsearch);
         
-        fd2.setFromValue(0);
+            fd2.setFromValue(0);
         
-        fd2.setToValue(1);
+            fd2.setToValue(1);
         
         
-        FadeTransition fd3=new FadeTransition(Duration.millis(500));
-        fd3.setNode(reportcreation);
+            FadeTransition fd3=new FadeTransition(Duration.millis(500));
+            fd3.setNode(reportcreation);
         
-        fd3.setFromValue(0);
+            fd3.setFromValue(0);
         
-        fd3.setToValue(1);
-         fd2.setOnFinished(event->{
-           updateProgress(75,100);
-        fd3.play();
-        });
+            fd3.setToValue(1);
+            fd2.setOnFinished(event->{
+                bsp.setProgress(100);
+                updateProgress(75,100);
+                fd3.play();
+            });
        
          fd3.setOnFinished(event->{
              updateProgress(100,100);
@@ -367,21 +364,23 @@ public class DataProcessor extends Task<Void> {
              @Override
              protected Object call() throws Exception {
                  Properties.isReady = false;
-                    updateMessage("Creating Report");       
+                    updateMessage("Creating Report"); 
+                    updateProgress(0,100);
                       try{
                     System.out.println(ReportCreator.CreateReport());
-                  
+                    updateProgress(-1,100);
                     updateMessage("Report Complete");
                     }
                     catch(Exception e){
                     System.out.println(e+" EXCEPTION THROWN");
                     }
                     Properties.isReady = true;
+                    updateProgress(100,100);
                  return null;
              }
          
          };
-         
+         csp.progressProperty().bind(report_creation.progressProperty());
          Thread task_doer = new Thread(report_creation);
          task_doer.start();
          
@@ -579,27 +578,32 @@ public class DataProcessor extends Task<Void> {
         Task<Void> terrible =new Task<>(){
             @Override
             protected Void call() throws Exception {
+                updateProgress(-1,100);
                 updateMessage("Creating Report");
                 Properties.isReady = false;
                 ReportCreator.CreateReport();
                 Properties.isReady = true;
                 updateMessage("Report Created");
+                updateProgress(100,100);
                 
                 return null;
             }
         };
         
-        
+        csp.progressProperty().bind(terrible.progressProperty());
         Thread creator = new Thread(terrible);
         creator.setDaemon(true);
         creator.start();
+        terrible.setOnSucceeded(e->{
+        updateProgress(100,100);
+        });
         });
         
         
         
         
         fd.setOnFinished(event->{
-        
+         msp.setProgress(100);
         fd2.play();
         });
         
@@ -607,14 +611,16 @@ public class DataProcessor extends Task<Void> {
         //sentence[file1]<->sentence[file2]<->....sentence[fileN] -> source_url
         Properties.source_mapping = new ArrayList<>();
         fd2.setOnFinished(event->{
+            updateProgress(50,100);
             //traverse through the other documents to search for plag
             Task<Void> documentSearch = new Task<>(){
                 @Override
                 protected Void call() throws Exception {
+                    double progress_counter = 0.0;
                     if(resultant[0].length > 1)
                     {
                        String file = resultant[0][0];
-                      
+                       
                        
                        String sentences[] = resultant[1][0].split("::");
                        
@@ -622,12 +628,15 @@ public class DataProcessor extends Task<Void> {
                        //we start from the second element
                        for(int i=1;i<resultant[0].length;i++)
                        {
+                        
                           
                          String comparative_sentences[] = resultant[1][i].split("::");  
                          
                          for(String sentence:sentences)
                          {
-                             
+                                double progress= ((progress_counter++)/(double)resultant[0].length)*100.0; 
+                                System.out.println(progress+" is the progress");
+                                updateProgress(progress,100);
                              for(String compared_sentence:comparative_sentences)
                              {
                                      if(sentence.equals(compared_sentence))
@@ -652,6 +661,7 @@ public class DataProcessor extends Task<Void> {
                return null;
                 }
             };
+            bsp.progressProperty().bind(documentSearch.progressProperty());
             Thread rtx=new Thread(documentSearch);
             rtx.start();
             
@@ -839,10 +849,12 @@ public class DataProcessor extends Task<Void> {
                 @Override
                 protected Void call() throws Exception {
                   //create source maps;
-                  
+                  double progress_counter = 0;
                   try{
                   if(resultant[0].length > 1)
                     {
+                       double progress = (progress_counter++/(double)resultant[0].length)*100.0; 
+                       updateProgress(progress,100);
                        String file = resultant[0][0];
                     
                        String sentences[] = resultant[1][0].split("::");
@@ -895,6 +907,7 @@ public class DataProcessor extends Task<Void> {
                   return null;
                 }
             };
+            bsp.progressProperty().bind(source_mapping.progressProperty());
             Thread mapper = new Thread(source_mapping);
             mapper.setDaemon(true);
             mapper.start();
@@ -912,18 +925,21 @@ public class DataProcessor extends Task<Void> {
                  @Override
                  protected Void call() throws Exception {
                       Properties.isReady = false;
+                      updateProgress(-1,100);
                       try{
                       ReportCreator.CreateReport();
                       }
                       catch(Exception e){
                       System.out.println(e+" REPORT EXCEPTION");
                       }
+                      updateProgress(100,100);
                       Properties.isReady = true;
                       System.out.println("Is READY");
                       return null;
                 }
                  
                  };
+                 csp.progressProperty().bind(terra.progressProperty());
                  Thread rtx = new Thread(terra);
                  rtx.start();
                  });
