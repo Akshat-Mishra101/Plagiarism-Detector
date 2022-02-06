@@ -115,11 +115,6 @@
             </AnchorPane>
             <Button fx:id="bt1" layoutX="17.0" layoutY="578.0" mnemonicParsing="false" onAction="#saveReport" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1; -fx-border-color: #3d87ff; -fx-border-radius: 100; -fx-background-radius: 100; -fx-font-weight: 700; -fx-border-width: 1.5; -fx-padding: 3 10 3 10;" text="Save Report" AnchorPane.bottomAnchor="21.199999999999932" AnchorPane.leftAnchor="17.0" />
             <Button fx:id="bt2" layoutX="175.0" layoutY="578.0" mnemonicParsing="false" onAction="#reportCreation" onMouseEntered="#onEnter" onMouseExited="#onExit" style="-fx-background-color: #f1f1f1; -fx-border-color: #3d87ff; -fx-border-radius: 100; -fx-background-radius: 100; -fx-font-weight: 700; -fx-border-width: 1.5; -fx-padding: 3 10 3 10;" text="Preview Report" AnchorPane.bottomAnchor="21.199999999999932" AnchorPane.rightAnchor="19.399999999999977" />
-            <Text layoutX="22.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Plagiarism Report Complete" wrappingWidth="229.0296630859375">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Text>
             <Text fx:id="MainText" layoutX="12.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="282.4000000000001">
                <font>
                   <Font name="System Bold" size="14.0" />

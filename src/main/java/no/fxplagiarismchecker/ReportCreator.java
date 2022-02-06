@@ -7,6 +7,7 @@ package no.fxplagiarismchecker;
 
 import Engine.Properties;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import java.awt.Desktop;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -40,6 +42,7 @@ public class ReportCreator implements Initializable {
     
     //will contain the metadata of files, seperated by the delimeter '::'
     static String data[];
+    String type;
     
     
     int current_position = 0;
@@ -113,32 +116,117 @@ public class ReportCreator implements Initializable {
                 plagiarism_percentage.setProgress(Double.parseDouble(values[1])/100.0);
                 hydrate(values[2]);
             }
-            System.out.println(data[current_position]);
+           
         
         
     }
+    public String translate(String predicate){
+        String splits[]  = predicate.split("<=>");
+        String sentence = "";
+        int count = 0;
+        for(String token:splits)
+        {
+            
+          sentence += token.substring(token.lastIndexOf("[")+1,token.length()-1) + (count == 0?" And ":"");
+          count++;
+        }
+        sentence += " have '"+splits[0].substring(0,splits[0].lastIndexOf("["))+"'";
+    return sentence;
+    }
     public void hydrate(String source_maps)
     {
+     
+
      sources.getItems().clear();
      source_maps = source_maps.substring(1,source_maps.length()-3);
+     if(type.contains("WebSearch"))
+     Arrays.stream(source_maps.split("::")).forEach(item -> sources.getItems().add(item.substring(item.lastIndexOf(">")+1)));
+    
+     else if(type.contains("Interdocument Search")){
+         
+     Arrays.stream(source_maps.split("::"))
+             .filter(item -> item.contains(current_document_name.getText()))
+             .forEach(item ->sources.getItems().add(translate(item)));
      
-     Arrays.stream(source_maps.split("::")).forEach(item -> sources.getItems().add(item.substring(item.indexOf(">")+1)));
-       
-     System.out.println(source_maps);
+     System.out.println("InterDocument"+source_maps);
+     
+     //Arrays.stream(source_maps.split("::")).forEach(item -> sources.getItems().add(item.substring(item.lastIndexOf(">")+1)));
+     }
+     else{
+    // Arrays.stream(source_maps.split("::")).forEach(item -> sources.getItems().add(item.substring(item.lastIndexOf(">")+1)));
+     }
+     
     
     }
     
     @FXML
-    public void sentence_tracer(){
-        System.out.println("Traced");
-       
-        //stc.getStylesheets().add(getClass().getResource("styles/main.css").toExternalForm());
-        stc.setStyleClass(0,5,"high");
+    public void sentence_tracer(MouseEvent e){
         
-        stc.setStyle("-fx-background-radius: 10; -fx-background-color: #f7f7f7;");
-       
+        if(e.getClickCount()==3){
+        String url=sources.getFocusModel().getFocusedItem().toString();
+        
+        try {
+            if(url.contains("http"))
+            Desktop.getDesktop().browse(new URL(url).toURI());
+        }
+        catch(Exception ed){
+            
+        }
+       }
+        //stc.getStylesheets().add(getClass().getResource("styles/main.css").toExternalForm());
+        
+        String source = sources.getFocusModel().getFocusedItem().toString();
+        if(source!=null)
+        {
+            
+            String value = data[current_position].split("`")[2];
+            String relevant_sentences[] = Arrays
+                    .stream(value.substring(1, value.length()-3)
+                    .split("::"))
+                    .filter(item -> item.contains(source)).collect(Collectors.joining("`"))
+                    .trim()
+                    .split("`");
+            
+            String document_name = new Scanner(documents[current_position]).nextLine().trim();
+            String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
+                            .filter(line -> !line.trim().equals(document_name.trim()))
+                            .collect(Collectors.joining()).trim();
+            
+            stc.setStyleClass(0,document.length()-11,"low");
+        
+         if(type.contains("WebSearch")){
+
+            for(String sentence:relevant_sentences){
+
+                int position = document.indexOf(sentence.substring(0, sentence.lastIndexOf("->")));
+                System.out.println(position);
+                System.out.println(sentence.substring(0, sentence.lastIndexOf("->")));
+                if(position>-1) 
+                    stc.setStyleClass(position,position+sentence.subSequence(0, sentence.lastIndexOf("->")).length(), "high");
+        
+            
+            }
+         }
+         else if(type.contains("Interdocument Search"))
+         {
+            String sentence = source.substring(source.indexOf("'")+1, source.lastIndexOf("'"));
+            int position = document.indexOf(sentence);
+            System.out.println(sentence);
+            
+            if(position>-1) 
+                    stc.setStyleClass(position,position+sentence.length(),"high");
+            
+         
+         }
+         else{
+            
+         }
+        
+        }
     
     }
+    
+   
     public void setup()
     {
         
@@ -229,6 +317,10 @@ public class ReportCreator implements Initializable {
             {
                 report_title.setText(line.substring(line.indexOf(":")+1));
             }
+            if(line.contains("Report Info:"))
+            {
+               type = line.substring(line.indexOf(":")+1); 
+            }
             if(line.contains("doc_name"))
             {
                 while(scanner.hasNext())
@@ -253,10 +345,7 @@ public class ReportCreator implements Initializable {
            //System.out.println("Current Line: - "+line+(line.substring(line.indexOf(":")+1).trim().length()>0)+line.contains("filename:"));
         
         }
-        for(String value:documents)
-        {
-        System.out.println(value+"\r\n"+"_________");
-        }
+       
         
         
         //Arrays.stream(documents).forEach(item -> System.out.println(item +" ________"));

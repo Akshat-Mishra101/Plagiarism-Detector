@@ -137,9 +137,10 @@ public class DataProcessor extends Task<Void> {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   String token=st.nextToken();
+                  if(!isASkippableLine(token)){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
-                  
+                  }
                   
                   }
                 }
@@ -186,8 +187,10 @@ public class DataProcessor extends Task<Void> {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   String token=st.nextToken();
+                  if(!isASkippableLine(token)){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
+                  }
                   }
                 
                 }
@@ -219,8 +222,10 @@ public class DataProcessor extends Task<Void> {
                 while(sd.hasMoreElements())
                 {
                  String token=sd.nextToken();
+                 if(!isASkippableLine(token)){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
+                 }
                 }
                 
             }
@@ -244,8 +249,10 @@ public class DataProcessor extends Task<Void> {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                    String token=st.nextToken();
+                   if(!isASkippableLine(token)){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
+                   }
                  
                   }
                 
@@ -287,7 +294,7 @@ public class DataProcessor extends Task<Void> {
             
             if(str.substring(str.lastIndexOf("|")+1).equals(filename))
             {
-            
+               
             resultant[1][counter] += str.substring(0,str.lastIndexOf("|"))+"::";
             }
             
@@ -706,13 +713,9 @@ public class DataProcessor extends Task<Void> {
             Task<Void> T= new Task<>(){
                 @Override
                 protected Void call() throws Exception {
-                   //check for common points
-                   
-                    
-                    
-                    
+                   //check for common points 
                 //here we check for plagairism 
-                    int row=0;
+             int row=0;
             for(String filename:resultant[0])
             {
             double progress=(double)((row+1)/resultant[0].length)*100;
@@ -974,6 +977,22 @@ public class DataProcessor extends Task<Void> {
         
         return null;
         
+    }
+    
+    public boolean isASkippableLine(String line){
+        boolean result = false;
+     String lines[] = Properties.getValue("slines").split(",");
+     for(String value:lines)
+     {
+         
+      if(line.trim().contains(value.trim()))
+      {
+          System.out.println("We have to skip "+line);
+        result = true;
+        break;
+      }
+     }
+     return result;
     }
 }
     

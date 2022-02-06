@@ -23,7 +23,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
       </StyleClassedTextArea>
-      <Label fx:id="current_document_name" layoutX="185.0" layoutY="659.0" prefHeight="18.0" prefWidth="157.0" textAlignment="JUSTIFY" AnchorPane.bottomAnchor="22.600000000000023">
+      <Label fx:id="current_document_name" layoutX="151.0" layoutY="659.0" prefHeight="18.0" prefWidth="214.0" textAlignment="JUSTIFY" AnchorPane.bottomAnchor="23.0">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -51,10 +51,10 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <ListView fx:id="sources" layoutX="25.0" layoutY="326.0" onMouseClicked="#sentence_tracer" prefHeight="350.0" prefWidth="249.0" style="-fx-background-color: #fff; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: blue;" />
+            <ListView fx:id="sources" layoutX="25.0" layoutY="326.0" onMouseClicked="#sentence_tracer" prefHeight="350.0" prefWidth="249.0" style="-fx-background-color: #fff; -fx-border-color: blue;" AnchorPane.bottomAnchor="23.600000000000023" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="326.0" />
          </children>
       </AnchorPane>
-      <Button fx:id="right" layoutX="361.0" layoutY="656.0" mnemonicParsing="false" onAction="#Next_Document" style="-fx-background-color: #f2f2f2;" text="&gt;" AnchorPane.bottomAnchor="18.4" AnchorPane.leftAnchor="361.0" />
-      <Button fx:id="left" layoutX="127.0" layoutY="656.0" mnemonicParsing="false" onAction="#Next_Document" style="-fx-background-color: #f2f2f2;" text="&lt;" AnchorPane.bottomAnchor="18.4" AnchorPane.leftAnchor="127.0" />
+      <Button fx:id="right" layoutX="370.0" layoutY="655.0" mnemonicParsing="false" onAction="#Next_Document" style="-fx-background-color: #f2f2f2;" text="&gt;" AnchorPane.bottomAnchor="19.399999999999977" AnchorPane.leftAnchor="370.0" />
+      <Button fx:id="left" layoutX="119.0" layoutY="655.0" mnemonicParsing="false" onAction="#Next_Document" style="-fx-background-color: #f2f2f2;" text="&lt;" AnchorPane.bottomAnchor="19.399999999999977" AnchorPane.leftAnchor="119.0" />
    </children>
 </AnchorPane>

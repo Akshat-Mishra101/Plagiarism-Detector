@@ -163,7 +163,7 @@ public class MainPageController implements Initializable{
       rt.setToAngle(0);
 
       rt.play();
-      System.out.println("here");
+    
     }
     @FXML
     public void saveReport() throws IOException{
