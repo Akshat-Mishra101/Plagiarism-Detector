@@ -39,6 +39,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -143,6 +144,42 @@ public class MainPageController implements Initializable{
     Button bt2;
     
     String defaults[][]={{"proxy","maxresults","engines","plagcheck","sphrase","slines"},{"","5","G","Partial","",""}};
+    @FXML
+    public void press(Event e){
+        
+        String result =  e.getSource().toString();
+        
+         if(result.contains("bt1")){
+            bt1.setStyle(base_style+" -fx-background-color:#90EE90; -fx-text-fill:#000");
+         }
+         else if(result.contains("bt2")){
+            bt2.setStyle(base_style+" -fx-background-color:#90EE90; -fx-text-fill:#000");
+         }
+        else if(result.contains("Save Changes")){
+            savec.setStyle(base_style+" -fx-background-color:#90EE90; -fx-text-fill:#000");
+        }
+        else if(result.contains("Reset Defaults")){
+        resetd.setStyle(base_style+" -fx-background-color:#90EE90; -fx-text-fill:#000");
+        }
+    
+    }
+    @FXML
+    public void release(Event e){
+         String result =  e.getSource().toString();
+         if(result.contains("bt1")){
+            bt1.setStyle(base_style);
+         }
+         else if(result.contains("bt2")){
+            bt2.setStyle(base_style);
+         }
+        else if(result.contains("Save Changes")){
+            savec.setStyle(base_style);
+        }
+        else if(result.contains("Reset Defaults")){
+        resetd.setStyle(base_style);
+        }
+    
+    }
     @FXML
     public void animate_report()
     {

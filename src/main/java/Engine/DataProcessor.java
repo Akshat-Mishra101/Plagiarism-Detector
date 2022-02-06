@@ -4,7 +4,8 @@
  * and open the template in the editor.
  */
 package Engine;
-
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -137,7 +138,7 @@ public class DataProcessor extends Task<Void> {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                   String token=st.nextToken();
-                  if(!isASkippableLine(token)){
+                  if(!isASkippableLine(token)&&token.trim().split(" ").length>6){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
                   }
@@ -151,7 +152,12 @@ public class DataProcessor extends Task<Void> {
         }
         else if(file.getName().contains(".pdf"))
         {
-             
+            PDDocument document = PDDocument.load(file);
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            String text = pdfStripper.getText(document);
+            
+            
+            /**
                    PDDocument document = PDDocument.load(file);
                    PDFRenderer pdfRenderer = new PDFRenderer(document);
                    
@@ -175,29 +181,30 @@ public class DataProcessor extends Task<Void> {
                    
                    String result = _tesseract.doOCR(tempFile);
                    tempFile.delete();
-                   Scanner sd=new Scanner(result);
+                   * */
+                   Scanner sd=new Scanner(text);
                 while(sd.hasNext())
                 {
                     
                      String line = sd.nextLine();
-                  Properties.documents[Properties.counter] += line+"\r\n";
+                    Properties.documents[Properties.counter] += line+"\r\n";
                     
-                updateMessage("Extracting Text");
-                StringTokenizer st=new StringTokenizer(line,".!?");
-                  // tokenize the Strings
-                  while(st.hasMoreTokens()){
-                  String token=st.nextToken();
-                  if(!isASkippableLine(token)){
-                  strings.add(token+"|"+file.getName());
-                  totalwords+=token.split(" ").length;
-                  }
+                    updateMessage("Extracting Text");
+                    StringTokenizer st=new StringTokenizer(line,".!?");
+                    // tokenize the Strings
+                    while(st.hasMoreTokens()){
+                        String token=st.nextToken();
+                        if(!isASkippableLine(token)&&token.trim().split(" ").length>6){
+                        strings.add(token+"|"+file.getName());
+                        totalwords+=token.split(" ").length;
+                    }
                   }
                 
                 }
                 
                 
                 
-                  }  
+                    
                    
                   
                
@@ -222,7 +229,7 @@ public class DataProcessor extends Task<Void> {
                 while(sd.hasMoreElements())
                 {
                  String token=sd.nextToken();
-                 if(!isASkippableLine(token)){
+                 if(!isASkippableLine(token)&&token.trim().split(" ").length>6){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
                  }
@@ -249,7 +256,7 @@ public class DataProcessor extends Task<Void> {
                   // tokenize the Strings
                   while(st.hasMoreTokens()){
                    String token=st.nextToken();
-                   if(!isASkippableLine(token)){
+                   if(!isASkippableLine(token)&&token.trim().split(" ").length>6){
                   strings.add(token+"|"+file.getName());
                   totalwords+=token.split(" ").length;
                    }
@@ -342,8 +349,8 @@ public class DataProcessor extends Task<Void> {
         updateMessage("Text Extraction Complete");
 
         if(type_of_operation.equals("websearch"))
-        {
-            documentalsearch.setDisable(true);
+        {  
+         
             FadeTransition fd2=new FadeTransition(Duration.millis(500));
             fd2.setNode(documentalsearch);
         
@@ -359,6 +366,7 @@ public class DataProcessor extends Task<Void> {
         
             fd3.setToValue(1);
             fd2.setOnFinished(event->{
+                updateMessage("Preparing Report");
                 bsp.setProgress(100);
                 updateProgress(75,100);
                 fd3.play();
@@ -407,6 +415,7 @@ public class DataProcessor extends Task<Void> {
         
         fd.play();
         fd.setOnFinished(event->{
+            updateMessage("Checking For Plagiarism");
             updateProgress(50,100);
             Task<Void> T= new Task<>(){
             @Override
@@ -712,7 +721,7 @@ public class DataProcessor extends Task<Void> {
            
             Task<Void> T= new Task<>(){
                 @Override
-                protected Void call() throws Exception {
+            protected Void call() throws Exception {
                    //check for common points 
                 //here we check for plagairism 
              int row=0;
@@ -980,14 +989,15 @@ public class DataProcessor extends Task<Void> {
     }
     
     public boolean isASkippableLine(String line){
-        boolean result = false;
+     boolean result = false;
      String lines[] = Properties.getValue("slines").split(",");
+    
      for(String value:lines)
      {
          
-      if(line.trim().contains(value.trim()))
+      if(value.trim().length()>0&&line.trim().contains(value.trim()))
       {
-          System.out.println("We have to skip "+line);
+        System.out.println("We have to skip "+line);
         result = true;
         break;
       }

@@ -75,6 +75,7 @@ public class ReportCreator {
              //String source = ""; // this string would store the source of plagiarism for this 
             if(result.equals("false"))
             {
+              
               wordcount += text.split(" ").length;
               textaddition+=text+"::";
               

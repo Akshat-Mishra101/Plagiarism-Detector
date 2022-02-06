@@ -135,13 +135,21 @@ public class ReportCreator implements Initializable {
     }
     public void hydrate(String source_maps)
     {
+       
+        
      
 
      sources.getItems().clear();
      source_maps = source_maps.substring(1,source_maps.length()-3);
-     if(type.contains("WebSearch"))
-     Arrays.stream(source_maps.split("::")).forEach(item -> sources.getItems().add(item.substring(item.lastIndexOf(">")+1)));
-    
+     if(type.contains("WebSearch")){
+     Arrays.stream(source_maps.split("::")).forEach(item -> {
+             
+             
+             sources.getItems().add(item.substring(item.lastIndexOf(">")+1));
+             
+             
+                     });
+     }
      else if(type.contains("Interdocument Search")){
          
      Arrays.stream(source_maps.split("::"))
