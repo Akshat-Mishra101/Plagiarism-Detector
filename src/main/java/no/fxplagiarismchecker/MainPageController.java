@@ -205,9 +205,12 @@ public class MainPageController implements Initializable{
     @FXML
     public void saveReport() throws IOException{
      if(Properties.plagReport.length()>0){
-        FileWriter fc = new FileWriter(new FileChooser().showSaveDialog(bt1.getScene().getWindow()).getAbsolutePath()+".txt");
+         File fd = new File(new FileChooser().showSaveDialog(bt1.getScene().getWindow()).getAbsolutePath()+".txt");
+        if(fd!=null){
+        FileWriter fc = new FileWriter(fd);
         fc.write(Properties.plagReport);
         fc.close();
+        }
      }
     }
     @FXML

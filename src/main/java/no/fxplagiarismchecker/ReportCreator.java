@@ -341,8 +341,12 @@ public class ReportCreator implements Initializable {
                         {
                             System.out.println(Double.parseDouble(plag_percentage)+" here");
                             plagiarism_percentage.setProgress(Double.parseDouble(plag_percentage)/100.0);
+                            try{
                             hydrate(values[2].substring(1, values[2].length()-3));
-
+                            }
+                            catch(Exception e){
+                            System.out.println("Not Plagiarised");
+                            }
                         }
                     data[pointer2] =  line;
                     pointer2++;

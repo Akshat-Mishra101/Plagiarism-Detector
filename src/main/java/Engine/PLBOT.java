@@ -47,7 +47,7 @@ public class PLBOT {
  
     newer=newer.replace("—", "");
     newer=newer.replace("“", "");
-   boolean flag=false;
+    boolean flag = false;
   
    
    
@@ -63,6 +63,7 @@ public class PLBOT {
      if(retry>0){System.out.println("Retry Count: "+retry);
      
      if(retry==15){
+         flag = true;
      break;
      }
      
@@ -83,7 +84,7 @@ public class PLBOT {
            //System.out.println(kds);
            if(kds.trim().contains("No results found for")||kds.trim().contains("did not match any documents"))
            {
-               //System.out.println("yes we found it");
+               System.out.println("yes we found it");
                
            flag=true;
            break;
@@ -92,10 +93,12 @@ public class PLBOT {
            
            if(flag==true)
            {
+               
            break;
            }
            else
            {
+               System.out.println("We are here");
            PLBOT.dom = doc.html();
            }
      
@@ -109,7 +112,7 @@ public class PLBOT {
      
    
       String sect=doc.getElementById("result-stats").text();
-     // System.out.println("Result Stats: "+sect);
+      System.out.println("\r\nWE ARE HERE_______Result Stats: "+sect);
       if(sect!=null)
       {
           flag=sect.contains("About 0 results")?true:false;

@@ -81,10 +81,11 @@ public class Starter {
             Logger.getLogger(Starter.class.getName()).log(Level.SEVERE, null, ex);
         }
         * **/
-      // App.main(args);
-      Properties.loadFiles();
-      boolean result = PLBOT.search("were obtained from various global institutions from past years till the current year and further were used in order to analyze the current trends for every goal.", 15000);
-      System.out.println(result);
+       App.main(args);
+      //Properties.loadFiles();
+     // boolean result = PLBOT.search("As software development evolved, a group of independent thinkers in software development realized that all those traditional development methods just weren’t enough in a world full of innovative technology that requires original thinking", 15000);
+      //System.out.println(result);
+      
       //yuRUbf class
       /**
       Elements el = Jsoup.parse(new File("C:\\Users\\joey\\Downloads\\'Yes, speed matters. But we can’t focus too much on speed—otherwise there’s no time for reflection, and reflection is critical for learning.' - Google Search.html"), "UTF-8").getElementsByClass("yuRUbf");

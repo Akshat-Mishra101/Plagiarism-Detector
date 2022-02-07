@@ -26,11 +26,11 @@ import javafx.concurrent.Task;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import javax.imageio.ImageIO;
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.ImageType;
-import org.apache.pdfbox.rendering.PDFRenderer;
+//import net.sourceforge.tess4j.ITesseract;
+//import net.sourceforge.tess4j.Tesseract;
+//import org.apache.pdfbox.pdmodel.PDDocument;
+//import org.apache.pdfbox.rendering.ImageType;
+//import org.apache.pdfbox.rendering.PDFRenderer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -373,6 +373,7 @@ public class DataProcessor extends Task<Void> {
             });
        
          fd3.setOnFinished(event->{
+             
              updateProgress(100,100);
          //Create The Plagiarism Report
          Task<Void> report_creation = new Task(){
@@ -398,7 +399,7 @@ public class DataProcessor extends Task<Void> {
          csp.progressProperty().bind(report_creation.progressProperty());
          Thread task_doer = new Thread(report_creation);
          task_doer.start();
-         
+         updateMessage("Report Complete");
          });
          
          
@@ -424,8 +425,9 @@ public class DataProcessor extends Task<Void> {
             int row=0;
             for(String filename:resultant[0])
             {
-            double progress=(double)((double)(row+1)/(double)resultant[0].length)*(double)100.0;
+            double progress=(double)((double)(row-1)/(double)resultant[0].length)*(double)100.0;
             System.out.println(progress+"%");
+            
            updateProgress(progress,100);
             
            System.out.println(filename+" : "+resultant[1][row]);
@@ -539,7 +541,8 @@ public class DataProcessor extends Task<Void> {
             Thread rtx=new Thread(T);
             rtx.start();
            T.setOnSucceeded(e ->{
-               
+               msp.progressProperty().unbind();
+               msp.setProgress(100);
        fd2.play();
            });
         
