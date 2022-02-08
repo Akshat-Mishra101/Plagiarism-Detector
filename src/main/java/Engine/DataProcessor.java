@@ -496,6 +496,8 @@ public class DataProcessor extends Task<Void> {
                else{ //full plag check
                    
                     boolean result = PLBOT.search(individual_strings, 250000);
+                    if(Properties.getValue("proxy").trim().length()<=1)
+                    Thread.sleep(1000);
                     List<String> sources = PLBOT.getSources();
                     String sorcerrer = "";
                   for(String source:sources){

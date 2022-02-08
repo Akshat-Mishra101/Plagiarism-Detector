@@ -6,6 +6,7 @@
 package no.fxplagiarismchecker;
 
 import Engine.Properties;
+import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import java.awt.Desktop;
 import java.net.URL;
@@ -45,9 +46,13 @@ public class ReportCreator implements Initializable {
     String type;
     
     
+     
     int current_position = 0;
     int array_length = 0;
-    
+    @FXML
+    Text total_plagiarised_words;
+    @FXML
+    MFXCheckbox highlightAll;
     @FXML
     MFXProgressSpinner plagiarism_percentage;
     @FXML
@@ -74,9 +79,8 @@ public class ReportCreator implements Initializable {
     @FXML
     public void Next_Document(ActionEvent e)
     {
-        System.out.println(e.getSource());
-            stc.setStyle("-fx-background-radius: 10; -fx-background-color: #f7f7f7;");
-            stc.setStyleClass(0,5,"low");
+       
+           
             if(e.getSource().toString().contains("right"))
             {
                 current_position++;
@@ -97,6 +101,10 @@ public class ReportCreator implements Initializable {
                 current_document_name.setText(document_name);
                 String values[] = data[current_position].split("`");
                 plagiarism_percentage.setProgress(Double.parseDouble(values[1])/100.0);
+                
+                int plagiarised_words_total = (int)((Double.parseDouble(values[1])/100.0)*Double.parseDouble(values[values.length-1]));
+                total_plagiarised_words.setText(plagiarised_words_total+"/"+values[values.length-1]);
+                
                 hydrate(values[2]);
             }
             else{
@@ -114,6 +122,8 @@ public class ReportCreator implements Initializable {
                 current_document_name.setText(document_name);
                 String values[] = data[current_position].split("`");
                 plagiarism_percentage.setProgress(Double.parseDouble(values[1])/100.0);
+                int plagiarised_words_total = (int)((Double.parseDouble(values[1])/100.0)*Double.parseDouble(values[values.length-1]));
+                total_plagiarised_words.setText(plagiarised_words_total+"/"+values[values.length-1]);
                 hydrate(values[2]);
             }
            
@@ -133,6 +143,33 @@ public class ReportCreator implements Initializable {
         sentence += " have '"+splits[0].substring(0,splits[0].lastIndexOf("["))+"'";
     return sentence;
     }
+    
+    
+    @FXML
+    public void HighlightAll()
+    {
+        if(highlightAll.isSelected())
+        {
+            
+             sources.getItems().forEach(item->{
+              sentence_tracer(item.toString().trim());
+            });
+            
+            
+    
+        }
+        else
+        {
+           
+            String document_name = new Scanner(documents[current_position]).nextLine().trim();
+            String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
+                            .filter(line -> !line.trim().equals(document_name.trim()))
+                            .collect(Collectors.joining()).trim();
+            stc.setStyleClass(0,stc.getText().length(),"low");
+           
+        }
+    
+    }
     public void hydrate(String source_maps)
     {
        
@@ -144,8 +181,10 @@ public class ReportCreator implements Initializable {
      if(type.contains("WebSearch")){
      Arrays.stream(source_maps.split("::")).forEach(item -> {
              
-             
-             sources.getItems().add(item.substring(item.lastIndexOf(">")+1));
+             if(!sources.getItems().contains(item.substring(item.lastIndexOf(">")+1).trim())){
+             sources.getItems().add(item.substring(item.lastIndexOf(">")+1).trim());
+            
+             }
              
              
                      });
@@ -166,9 +205,61 @@ public class ReportCreator implements Initializable {
      
     
     }
+    public void sentence_tracer(String sentencee)
+    {
+        String source = sentencee;
+        if(source!=null)
+        {
+            
+            String value = data[current_position].split("`")[2];
+            String relevant_sentences[] = Arrays
+                    .stream(value.substring(1, value.length()-3)
+                    .split("::"))
+                    .filter(item -> item.contains(source)).collect(Collectors.joining("`"))
+                    .trim()
+                    .split("`");
+            
+            String document_name = new Scanner(documents[current_position]).nextLine().trim();
+            String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
+                            .filter(line -> !line.trim().equals(document_name.trim()))
+                            .collect(Collectors.joining()).trim();
+            
+            //stc.setStyleClass(0,document.length(),"low");
+        
+         if(type.contains("WebSearch")){
+
+            for(String sentence:relevant_sentences){
+
+                int position = document.trim().indexOf(sentence.substring(0, sentence.lastIndexOf("->")).trim());
+                System.out.println(position);
+                System.out.println(sentence.substring(0, sentence.lastIndexOf("->")));
+                if(position>-1) 
+                    stc.setStyleClass(position,position+sentence.subSequence(0, sentence.lastIndexOf("->")).length(), "high");
+        
+            
+            }
+         }
+         else if(type.contains("Interdocument Search"))
+         {
+            String sentence = source.substring(source.indexOf("'")+1, source.lastIndexOf("'"));
+            int position = document.indexOf(sentence);
+            System.out.println(sentence);
+            
+            if(position>-1) 
+                    stc.setStyleClass(position,position+sentence.length(),"high");
+            
+         
+         }
+         else{
+            
+         }
+        
+        }
     
+    }
     @FXML
     public void sentence_tracer(MouseEvent e){
+        highlightAll.setSelected(false);
         
         if(e.getClickCount()==3){
         String url=sources.getFocusModel().getFocusedItem().toString();
@@ -199,14 +290,14 @@ public class ReportCreator implements Initializable {
             String document  = Arrays.stream(documents[current_position].split("/\r\n|\n"))
                             .filter(line -> !line.trim().equals(document_name.trim()))
                             .collect(Collectors.joining()).trim();
-            
-            stc.setStyleClass(0,document.length()-11,"low");
+           
+            stc.setStyleClass(0,stc.getText().length(),"low");
         
          if(type.contains("WebSearch")){
 
             for(String sentence:relevant_sentences){
 
-                int position = document.indexOf(sentence.substring(0, sentence.lastIndexOf("->")));
+                int position = document.trim().indexOf(sentence.substring(0, sentence.lastIndexOf("->")).trim());
                 System.out.println(position);
                 System.out.println(sentence.substring(0, sentence.lastIndexOf("->")));
                 if(position>-1) 
@@ -328,6 +419,7 @@ public class ReportCreator implements Initializable {
             if(line.contains("Report Info:"))
             {
                type = line.substring(line.indexOf(":")+1); 
+               
             }
             if(line.contains("doc_name"))
             {
@@ -341,6 +433,9 @@ public class ReportCreator implements Initializable {
                         {
                             System.out.println(Double.parseDouble(plag_percentage)+" here");
                             plagiarism_percentage.setProgress(Double.parseDouble(plag_percentage)/100.0);
+                            int plagiarised_words_total = (int)((Double.parseDouble(plag_percentage)/100.0)*Double.parseDouble(values[values.length-1]));
+                           
+                            total_plagiarised_words.setText(plagiarised_words_total+"/"+values[values.length-1]);
                             try{
                             hydrate(values[2].substring(1, values[2].length()-3));
                             }
