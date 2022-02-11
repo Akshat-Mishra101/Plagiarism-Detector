@@ -35,11 +35,7 @@
     <version>0.10.7</version>
 </dependency>
 
-        <dependency>
-  		<groupId>net.sourceforge.tess4j</groupId>
-  		<artifactId>tess4j</artifactId>
-  		<version>5.0.0</version>
-  	</dependency>
+        
   	<dependency>
   		<groupId>org.apache.pdfbox</groupId>
   		<artifactId>pdfbox</artifactId>
@@ -58,6 +54,7 @@
     </dependencies>
     <build>
         <plugins>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

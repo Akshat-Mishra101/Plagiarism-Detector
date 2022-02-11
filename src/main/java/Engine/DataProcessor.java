@@ -7,7 +7,7 @@ package Engine;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,13 +19,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Task;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
-import javax.imageio.ImageIO;
+
 //import net.sourceforge.tess4j.ITesseract;
 //import net.sourceforge.tess4j.Tesseract;
 //import org.apache.pdfbox.pdmodel.PDDocument;
