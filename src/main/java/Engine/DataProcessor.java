@@ -639,15 +639,12 @@ public class DataProcessor extends Task<Void> {
                     double progress_counter = 0.0;
                     if(resultant[0].length > 1)
                     {
-                       String file = resultant[0][0];
-                       
-                       
-                       String sentences[] = resultant[1][0].split("::");
-                       
-                       //finds all interplagiarised sentences
-                       //we start from the second element
-                       for(int i=1;i<resultant[0].length;i++)
+                       for(int j = 0;j<resultant[0].length;j++)
                        {
+                         String file = resultant[0][j];
+                         String sentences[] = resultant[1][j].split("::");
+                         for(int i=1;i<resultant[0].length;i++)
+                         {
                         
                           
                          String comparative_sentences[] = resultant[1][i].split("::");  
@@ -668,6 +665,12 @@ public class DataProcessor extends Task<Void> {
                          }
                        
                        }
+                       }
+                       
+                       
+                       //finds all interplagiarised sentences
+                       //we start from the second element
+                       
                        System.out.println("____________________________");
                        Properties.source_mapping.forEach(str->{
                        System.out.println(str);
