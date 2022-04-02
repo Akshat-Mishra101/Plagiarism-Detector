@@ -1,5 +1,7 @@
 # Plagiarism-Detector
 
+!['Preview'](https://github.com/Akshat-Mishra101/Plagiarism-Detector/blob/bug_fixes/Images/Screenshot%20(42).png "")
+
 # A Feature Rich Plagairism Detection Tool Written in Java
 
 The FXPlagiarism detector is a plagiarism detection software that is capable of extracting data from pdfs, docx, txt and html documents.
