@@ -179,7 +179,7 @@ public class DataProcessor extends Task<Void> {
                    _tesseract.setLanguage("eng"); // choose your language
                    
                    String result = _tesseract.doOCR(tempFile);
-                   tempFile.delete();
+                   tempFile.delete();\n \r\n
                    * */
                    Scanner sd=new Scanner(text);
                 while(sd.hasNext())
